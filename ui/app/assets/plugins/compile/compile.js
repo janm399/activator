@@ -36,17 +36,17 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
       function(event) {
         if (self.recompileOnChange()) {
           if (model.snap.app.hasPlay()) {
-            logging &&console.log("files changed but it's a Play app so not recompiling.")
+            console.log("files changed but it's a Play app so not recompiling.")
             self.logModel.info("Some of your files may have changed; reload in the browser or click \"Start compiling\" above to recompile.")
             self.logModel.info("  (for Play apps, Activator does not auto-recompile because it may conflict with compilation on reload in the browser.)")
           } else {
-            logging &&console.log("files changed, doing a recompile");
+            console.log("files changed, doing a recompile");
             // doCompile just marks a compile pending if one is already
             // active.
             self.doCompile();
           }
         } else {
-          logging &&console.log("recompile on change unchecked, doing nothing");
+          console.log("recompile on change unchecked, doing nothing");
         }
       });
 
@@ -54,11 +54,11 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
       // will then cause us to reload sources, which will then
       // trigger a FilesChanged which will trigger a compile.
       api.events.subscribe(function(event) {
-        logging &&console.log("filtering event: ", event);
+        console.log("filtering event: ", event);
         return event.type == 'SourcesMayHaveChanged';
       },
       function(event) {
-        logging &&console.log("Sources may have changed, reloading the list");
+        console.log("Sources may have changed, reloading the list");
         self.reloadSources(null);
       });
     },
@@ -80,11 +80,11 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
       var taskId = api.sbt.runTask({
         task: 'name',
         onmessage: function(event) {
-          logging &&console.log("event from name task ", event);
+          console.log("event from name task ", event);
           self.logEvent(event);
         },
         success: function(result) {
-          logging &&console.log("name task results ", result);
+          console.log("name task results ", result);
           self.activeTask("");
 
           var app = model.snap.app;
@@ -101,7 +101,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
           self.compileAfterReloadProjectInfo();
         },
         failure: function(status, message) {
-          logging &&console.log("loading project info failed", message);
+          console.log("loading project info failed", message);
           self.activeTask("");
           model.logModel.warn("Failed to load project details: " + message);
           self.status(api.STATUS_ERROR);
@@ -118,18 +118,18 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
       self.status(api.STATUS_BUSY);
       sbt.watchSources({
         onmessage: function(event) {
-          logging &&console.log("event watching sources", event);
+          console.log("event watching sources", event);
           self.logEvent(event);
         },
         success: function(data) {
-          logging &&console.log("watching sources result", data);
+          console.log("watching sources result", data);
           self.status(api.STATUS_DEFAULT);
           model.logModel.info("Will watch " + data.count + " source files.");
           if (typeof(after) === 'function')
             after();
         },
         failure: function(status, message) {
-          logging &&console.log("watching sources failed", message);
+          console.log("watching sources failed", message);
           model.logModel.warn("Failed to reload source file list: " + message);
           // WE should modify our status here!
           self.status(api.STATUS_ERROR);
@@ -147,7 +147,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
         self.status(api.STATUS_ERROR);
 
       if (self.needCompile()) {
-        logging &&console.log("need to recompile because something changed while we were compiling");
+        console.log("need to recompile because something changed while we were compiling");
         self.needCompile(false);
         self.doCompile();
       } else if (succeeded) {
@@ -181,7 +181,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
           self.logEvent(event);
         },
         success: function(data) {
-          logging &&console.log("compile result: ", data);
+          console.log("compile result: ", data);
           self.activeTask("");
           if (data.type == 'GenericResponse') {
             model.logModel.info('Compile complete.');
@@ -191,7 +191,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
           self.afterCompile(true); // true=success
         },
         failure: function(status, message) {
-          logging &&console.log("compile failed: ", status, message)
+          console.log("compile failed: ", status, message)
           self.activeTask("");
           model.logModel.error("Request failed: " + status + ": " + message);
           self.afterCompile(false); // false=failed
@@ -203,7 +203,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
     doCompile: function() {
       var self = this;
       if (self.haveActiveTask()) {
-        logging &&console.log("Attempt to compile with a compile already active, will recompile again when we finish");
+        console.log("Attempt to compile with a compile already active, will recompile again when we finish");
         self.needCompile(true);
         return;
       }
@@ -212,15 +212,15 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
       self.reloadProjectInfoThenCompile();
     },
     startStopButtonClicked: function(self) {
-      logging &&console.log("Start/stop compile was clicked");
+      console.log("Start/stop compile was clicked");
       if (self.haveActiveTask()) {
         sbt.killTask({
           taskId: self.activeTask(),
           success: function(data) {
-            logging &&console.log("kill success: ", data)
+            console.log("kill success: ", data)
           },
           failure: function(status, message) {
-            logging &&console.log("kill failed: ", status, message)
+            console.log("kill failed: ", status, message)
             model.logModel.error("Killing task failed: " + status + ": " + message)
           }
         });

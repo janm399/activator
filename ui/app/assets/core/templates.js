@@ -17,7 +17,7 @@ define(['webjars!knockout'], function(ko) {
   // Add the API the templates use.
   ko.utils.extend(ko.templateSources.stringTemplate.prototype, {
     data: function(key, value) {
-      logging &&console.log("data", key, value, this.templateName);
+      console.log("data", key, value, this.templateName);
       this.templates._data = this.templates._data || {};
       this.templates._data[this.templateName] = this.templates._data[this.templateName] || {};
       if(arguments.length === 1) {

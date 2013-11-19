@@ -14,9 +14,6 @@
     <title>Typesafe Console</title>
     <link href="@routes.Assets.at("core/main.css")" rel="stylesheet" type="text/css">
     <script type="text/javascript">
-      // Gobal configuration
-      var logging = false;
-      var debug = false;
       window.wsUrl = '@routes.Application.connectApp(model.id).webSocketURL()';
       window.consoleWsUrl = '@routes.ConsoleController.connectConsole(model.id).webSocketURL()';
       @* The @Html thing prevents the Json from being escaped *@

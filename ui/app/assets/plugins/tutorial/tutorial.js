@@ -15,7 +15,7 @@ define(['css!./tutorial', 'text!./tutorial.html', 'text!./page.html', 'webjars!k
       this.lastScrollTop = 0;
       this.active = ko.computed(function() {
         var result = self === self.tutorial.currentPage();
-        logging &&console.log("page " + self.index + " active=" + result);
+        console.log("page " + self.index + " active=" + result);
         return result;
       }, this);
     },
@@ -106,14 +106,14 @@ define(['css!./tutorial', 'text!./tutorial.html', 'text!./page.html', 'webjars!k
         old.lastScrollTop = $(this.node).find('article')[0].scrollTop;
       }
       if (item) {
-        logging &&console.log("selecting page " + item.index + ": " + item.title);
+        console.log("selecting page " + item.index + ": " + item.title);
         this.currentPage(item);
         // restore the page's scroll position, if we've even been rendered (may not have been)
         if (this.node !== null) {
           $(this.node).find('article')[0].scrollTop = item.lastScrollTop;
         }
       } else if (item === null) {
-        logging &&console.log("unselecting all pages");
+        console.log("unselecting all pages");
         this.currentPage(null);
       } else {
         console.error("Invalid page to select: ", item);

@@ -23,14 +23,14 @@ define(['./model', './pluginapi', './streams', './plugin', './navigation'], func
 
   var receiveMessage = function(event) {
     if (event.origin !== "https://typesafe.com") { // TODO change to typesafe.com
-      logging &&console.log("receiveMessage: Ignoring message ", event);
+      console.log("receiveMessage: Ignoring message ", event);
     } else {
       var obj = JSON.parse(event.data);
       if ('signedIn' in obj && typeof(obj.signedIn) == 'boolean') {
-        logging &&console.log("receiveMessage: signedIn=", obj.signedIn);
+        console.log("receiveMessage: signedIn=", obj.signedIn);
         model.snap.signedIn(obj.signedIn);
       } else {
-        logging &&console.log("receiveMessage: did not understand message ", event, " parsed ", obj);
+        console.log("receiveMessage: did not understand message ", event, " parsed ", obj);
       }
     }
   }

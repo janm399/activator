@@ -29,7 +29,7 @@ define([
     // widget a unique scope
     setKeybindingScope: function(scope) {
       if (this._keyScope !== null) {
-        logging &&console.log("Attempt to set key scope twice", scope);
+        console.log("Attempt to set key scope twice", scope);
         return;
       }
       this._keyScope = scope;
@@ -44,18 +44,18 @@ define([
           adjusted = params.slice(0);
           adjusted.unshift(scope);
         }
-        logging &&console.log("creating keybinding ", adjusted);
+        console.log("creating keybinding ", adjusted);
         key.apply(null, adjusted);
       });
     },
     // automatically called when widget becomes active
     installKeybindings: function() {
       if (this._keyScope === null) {
-        logging &&console.log("nobody set the key scope");
+        console.log("nobody set the key scope");
         return;
       }
       if (this._keysInstalled) {
-        logging &&console.log("tried to install keybindings twice", this);
+        console.log("tried to install keybindings twice", this);
         return;
       }
       this._keysInstalled = true;
@@ -72,11 +72,11 @@ define([
     widgets: [],
     status: null,
     init: function() {
-      if(!this.id) logging &&console.log('Error, plugin has no id: ', this);
-      if(!this.name) logging &&console.log('Error, plugin has no name: ', this);
-      if(!this.icon) logging &&console.log('Error, plugin has no icon: ', this);
-      if(!this.url) logging &&console.log('Error, plugin has no url (default link): ', this);
-      if(!this.routes) logging &&console.log('Error, plugin has no routes: ', this);
+      if(!this.id) console.log('Error, plugin has no id: ', this);
+      if(!this.name) console.log('Error, plugin has no name: ', this);
+      if(!this.icon) console.log('Error, plugin has no icon: ', this);
+      if(!this.url) console.log('Error, plugin has no url (default link): ', this);
+      if(!this.routes) console.log('Error, plugin has no routes: ', this);
 
       if(this.status === null)
         this.status = ko.observable(STATUS_DEFAULT);

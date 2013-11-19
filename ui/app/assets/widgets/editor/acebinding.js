@@ -89,10 +89,10 @@ define([
       // when file changes, subscribe to the new markers array
       if (fileMarkers !== oldMarkers) {
         if (markersSub !== null) {
-          logging &&console.log("editor dropping watch on old file markers: ", oldMarkers());
+          console.log("editor dropping watch on old file markers: ", oldMarkers());
           markersSub.dispose();
         }
-        logging &&console.log("editor watching file markers for " + file + ": ", fileMarkers());
+        console.log("editor watching file markers for " + file + ": ", fileMarkers());
         editor.fileMarkers = fileMarkers;
         editor.fileMarkersSub = fileMarkers.subscribe(function(newMarkers) {
           refreshFileMarkers(editor, newMarkers);

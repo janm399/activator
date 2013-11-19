@@ -164,7 +164,7 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
           }
         },
         success: function(data) {
-          logging &&console.log("test result: ", data);
+          console.log("test result: ", data);
 
           if (data.type == 'GenericResponse') {
             self.logModel.info('Testing complete.');
@@ -177,7 +177,7 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
           self.doAfterTest();
         },
         failure: function(status, message) {
-          logging &&console.log("test failed: ", status, message)
+          console.log("test failed: ", status, message)
           self.logModel.error("Failed: " + status + ": " + message);
           self.testStatus('Testing error: ' + message);
           self.lastTaskFailed(true);
@@ -209,17 +209,17 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
         sbt.killTask({
           taskId: self.activeTask(),
           success: function(data) {
-            logging &&console.log("kill success: ", data)
+            console.log("kill success: ", data)
           },
           failure: function(status, message) {
-            logging &&console.log("kill failed: ", status, message)
+            console.log("kill failed: ", status, message)
             self.logModel.error("HTTP request to kill task failed: " + message)
           }
         });
       }
     },
     startStopButtonClicked: function(self) {
-      logging &&console.log("Start/Stop was clicked");
+      console.log("Start/Stop was clicked");
       if (self.haveActiveTask()) {
         self.restartPending(false);
         self.doStop();
@@ -228,7 +228,7 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
       }
     },
     restartButtonClicked: function(self) {
-      logging &&console.log("Restart was clicked");
+      console.log("Restart was clicked");
       self.doStop();
       self.restartPending(true);
     }

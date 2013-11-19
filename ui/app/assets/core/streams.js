@@ -15,14 +15,14 @@ define(function() {
     var message = "This browser does not support WebSocket, but currently Activator requires it. " +
     "Newer IE, Firefox, Safari, or Chrome should work for example.";
     // be sure we at least log it
-    logging &&console.log(message);
+    console.log(message);
     // if jquery is screwy on the ancient browser, we still want to show the alert,
     // so put it in a try block.
     try {
       $('body').html('<div class="error" style="font-size: 24px; margin: 40px;"></div>');
       $('div.error').text(message);
     } catch(e) {
-      logging &&console.log("jquery not working either", e);
+      console.log("jquery not working either", e);
     }
 
     alert(message);
@@ -31,7 +31,7 @@ define(function() {
     throw new Error(message);
   }
 
-  logging &&console.log("WS opening: " + id);
+  console.log("WS opening: " + id);
   var socket = new WS(id);
 
   var subscribers = [];
@@ -103,7 +103,7 @@ define(function() {
         try {
           subscriber.handler(event);
         } catch(e) {
-          logging &&console.log('Handler ', subscriber, ' failed on message ', event, ' with error ', e);
+          console.log('Handler ', subscriber, ' failed on message ', event, ' with error ', e);
         }
       }
     });
@@ -112,20 +112,20 @@ define(function() {
   function receiveEvent(event) {
     // suppress LogEvent due to noisiness
     if (event.data.indexOf('"LogEvent"') < 0)
-      logging &&console.log("WS Event: ", event.data, event);
+      console.log("WS Event: ", event.data, event);
     var obj = JSON.parse(event.data);
     if ('response' in obj && obj.response == 'Pong') {
       if (pendingPing !== null) {
         if (obj.cookie != pendingPing.cookie) {
-          logging &&console.log("Pong cookie does not match! ", pendingPing, obj);
+          console.log("Pong cookie does not match! ", pendingPing, obj);
           // somehow there must be a different ping in progress
         } else {
           // this keeps the timeout from deciding our socket is dead
-          logging &&console.log("Got Pong response, socket is alive!")
+          console.log("Got Pong response, socket is alive!")
           pendingPing = null;
         }
       } else {
-        logging &&console.log("not expecting a Pong right now");
+        console.log("not expecting a Pong right now");
       }
     } else {
       sendEvent(obj);
@@ -135,13 +135,13 @@ define(function() {
   function checkPing(delay) {
     if (pendingPing === null) {
       pendingPing = { request: "Ping", cookie: randomShort().toString() };
-      logging &&console.log("pinging websocket for live-ness cookie=" + pendingPing.cookie);
+      console.log("pinging websocket for live-ness cookie=" + pendingPing.cookie);
       var cookie = pendingPing.cookie; // save cookie in timeout closure
       sendMessage(pendingPing);
       setTimeout(function() {
         if (pendingPing !== null &&
           pendingPing.cookie === cookie) {
-          logging &&console.log("socket ping timed out; closing WebSocket since it appears hosed");
+          console.log("socket ping timed out; closing WebSocket since it appears hosed");
           // this should invoke our onclose() handler
           socket.close();
         }
@@ -150,17 +150,17 @@ define(function() {
   }
 
   function onOpen(event) {
-    logging &&console.log("WS opened: ", event)
+    console.log("WS opened: ", event)
     checkPing();
     // re-ping every few minutes to catch it if the socket dies
     setInterval(function() {
-      logging &&console.log("Periodic websocket re-ping WS.OPEN=" + WS.OPEN + " readyState=" + socket.readyState);
+      console.log("Periodic websocket re-ping WS.OPEN=" + WS.OPEN + " readyState=" + socket.readyState);
       checkPing();
     }, 1000 * 60 * 5);
   }
 
   function onClose(event) {
-    logging &&console.log("WS closed: " + event.code + ": " + event.reason, event)
+    console.log("WS closed: " + event.code + ": " + event.reason, event)
 
     // TODO it would be nicer to do some kind of in-DOM lightbox dialog with
     // two buttons like "Reload" and "Go away" (maybe it's useful to not reload
@@ -179,7 +179,7 @@ define(function() {
   }
 
   function onError(event) {
-    logging &&console.log("WS error: ", event)
+    console.log("WS error: ", event)
     // TODO do same as for closed?
   }
 

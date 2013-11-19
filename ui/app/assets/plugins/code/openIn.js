@@ -87,17 +87,17 @@ function(eclipseTemplate, ideaTemplate, api, Overlay, log){
         var taskId = sbt.runTask({
           task: self.taskName,
           onmessage: function(event) {
-            logging &&console.log("event while generating " + self.ideName + " files ", event);
+            console.log("event while generating " + self.ideName + " files ", event);
             self.log.event(event);
           },
           success: function(data) {
-            logging &&console.log(self.ideName + " result", data);
+            console.log(self.ideName + " result", data);
             self.workingStatus("Successfully created " + self.ideName + " project files.");
             self._updateHaveProjectFiles();
             self.activeTask("");
           },
           failure: function(status, message) {
-            logging &&console.log(self.ideName + " fail", message);
+            console.log(self.ideName + " fail", message);
             self.workingStatus("Failed to generate " + self.ideName + " project files.");
             self._updateHaveProjectFiles();
             self.activeTask("");

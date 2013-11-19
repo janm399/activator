@@ -8,9 +8,6 @@
 		<title>Typesafe Activator</title>
 		<!-- Initialize global Javascript values... -->
 		<script type="text/javascript">
-      // Gobal configuration
-      var logging = false;
-      var debug = false;
 			window.wsUrl = '@routes.Application.homeStream.webSocketURL()';
 		</script>
 		<script data-main='@routes.Assets.at("core/home.js")' type='text/javascript' src='@routes.WebJarAssets.requirejs()'></script>

@@ -124,7 +124,7 @@ define(['text!./templatelist.html', 'webjars!knockout', 'core/widget', 'commons/
 
     },
     selectTemplate: function(template) {
-      logging &&console.log('Template selected', template);
+      console.log('Template selected', template);
       if(this.onTemplateSelected) this.onTemplateSelected(template);
     },
     load: function() {

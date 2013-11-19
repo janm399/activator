@@ -106,6 +106,7 @@ object RequestHandler {
   val metadataURL = url("metadata")
   val actorsURL = url("actors")
   val playRequestsURL = url("playrequestsummary/multi")
+  val playRequestURL = url("playrequestsummary/event/")
 
   def mapify[A](name: String, value: Option[A]): Map[String, String] =
     (for { v <- value } yield Map(name -> v.toString)) getOrElse Map.empty[String, String]

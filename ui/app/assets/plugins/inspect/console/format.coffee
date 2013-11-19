@@ -150,4 +150,7 @@ define ->
       if not date.getUTCFullYear? then date = new Date(date)
       @formatDate(date, UTC) + " " + @formatTime(date, true, true, UTC)
 
+    nanosToMillis: (nanos, decimals) ->
+      (nanos / 1000000).toFixed(decimals)
+
   new Format()

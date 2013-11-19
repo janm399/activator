@@ -1,7 +1,7 @@
 @import '../colors';
 
 #console {
-  .requests {
+  .request {
     table {
       font-size: 1.2em;
       width: 100%;
@@ -32,7 +32,7 @@
             color: @grey_text;
             vertical-align: bottom;
             &:first-child {
-              width: 60%;
+              width: 30%;
             }
             span {
               line-height: 30px;
@@ -48,26 +48,7 @@
       tbody {
         tr {
           td {
-            a {
-              display: inline-block;
-              height: 100%;
-              width: 100%;
-            }
-            &.path a:link {
-              color: @blue;
-              strong {
-                font-weight: 600;
-              }
-            }
-            a:link, a:visited {
-              color: black;
-            }
-            &.name a:link, &.name a:visited {
-              color: @blue;
-              strong {
-                font-weight: 600;
-              }
-            }
+            font-size: 1.0em;
           }
           &:hover td {
             background: @grey_alt;
@@ -78,39 +59,5 @@
         }
       }
     }
-
-    footer.filters {
-      .showing {
-        .itemsShown, .itemsTotal {
-          font-weight: 700;
-        }
-      }
-      .limit {
-        select {
-          font-weight: 700;
-          direction: rtl;
-          padding: 0;
-          width: 50px;
-          option {
-            text-align: right;
-          }
-        }
-        &:after {
-          position: static;
-        }
-      }
-    }
-
-    .hoverPopup {
-      color: #fff;
-      background: #e25758;
-      padding: 2px 5px;
-      border-radius: 2px;
-      position: absolute;
-      display: none;
-      white-space: nowrap;
-      z-index: 99999;
-    }
-
   }
 }

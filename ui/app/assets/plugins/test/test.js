@@ -149,15 +149,13 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
       // or append?  Tests may disappear and we'd never know...
 
       var taskId = sbt.runTask({
-        task: 'test',
+        task: { request: 'TestRequest', sendEvents: true },
         onmessage: function(event) {
           if (self.logModel.event(event)) {
             // nothing
-          } else if (event.type == 'GenericEvent' &&
-              event.task == 'test' &&
-              event.id == 'result') {
-            self.updateTest(event.params);
-          } else if (event.type == 'Started') {
+          } else if (event.event == 'TestEvent') {
+            self.updateTest(event);
+          } else if (event.event == 'Started') {
             // this is expected when we start a new sbt, but we don't do anything with it
           } else {
             self.logModel.leftoverEvent(event);
@@ -166,9 +164,10 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
         success: function(data) {
           console.log("test result: ", data);
 
-          if (data.type == 'GenericResponse') {
+          if (data.response == 'TestResponse') {
             self.logModel.info('Testing complete.');
             self.testStatus('Testing complete.');
+            // TODO - Update total status from outcome... (data.outcome).
           } else {
             self.logModel.error('Unexpected reply: ' + JSON.stringify(data));
             self.testStatus("Unexpected: " + JSON.stringify(data));
@@ -186,15 +185,15 @@ define(['text!./test.html', 'css!./test.css', 'core/pluginapi', 'core/model'], f
       });
       self.activeTask(taskId);
     },
-    updateTest: function(params) {
+    updateTest: function(event) {
       var match = ko.utils.arrayFirst(this.results(), function(item) {
-        return params.name === item.name;
+        return event.name === item.name;
       });
       if(!match) {
-        var test = new TestResult(params);
+        var test = new TestResult(event);
         this.results.push(test);
       } else {
-        match.update(params);
+        match.update(event);
       }
     },
     onCompileSucceeded: function(event) {

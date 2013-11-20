@@ -260,7 +260,7 @@ define(['text!./log.html', 'webjars!knockout', 'core/widget', 'commons/utils', '
     },
     // returns true if it was a log event
     event: function(event) {
-      if (event.type == 'LogEvent') {
+      if (event.event == 'LogEvent') {
         var message = event.entry.message;
         var logType = event.entry.type;
         if (logType == 'message') {
@@ -282,7 +282,7 @@ define(['text!./log.html', 'webjars!knockout', 'core/widget', 'commons/utils', '
       }
     },
     leftoverEvent: function(event) {
-      if (event.type == 'RequestReceivedEvent' || event.type == 'Started' || event.type == 'TaskComplete') {
+      if (event.event == 'RequestReceivedEvent' || event.event == 'Started' || event.event == 'TaskComplete') {
         // not interesting
       } else {
         this.warn("ignored event: " + JSON.stringify(event));

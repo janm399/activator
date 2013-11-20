@@ -167,27 +167,19 @@ define(['core/streams', 'commons/events', 'commons/utils'], function(streams, ev
 
     /** Generates the json for our task request.
      * @param o {String|Object}
-     *          Either the task string to run, or an object with the
-     *          following format:
-     *             task - The task id to run
-     *             description - The description for this task request.
-     *             params - extra parameters for the task
+     *          Either the request id or the request JSON to send.
      */
     buildRequestJson: function(o) {
-      var taskName = (typeof(o) == 'string') ? o : o.task;
+      var task = (typeof(o) == 'string') ? { request: o } : o;
+      var taskName = task.request;
       if (typeof(taskName) != 'string')
         throw new Error("No task name found");
       var request = {
         appId: serverAppModel.id,
         taskId: genTaskId(serverAppModel.id),
         description: (o.description  || (taskName + " " + serverAppModel.id)),
-        task: {
-          type: 'GenericRequest',
-          name: taskName
-        }
+        task: task
       };
-      if (typeof(o.params) == 'object')
-        request.task.params = o.params;
       return request;
     },
     fail: function(status, message) {
@@ -203,7 +195,7 @@ define(['core/streams', 'commons/events', 'commons/utils'], function(streams, ev
       }
     },
     messageHandler: function(event) {
-      if (event.type == 'TaskComplete') {
+      if (event.event == 'TaskComplete') {
         if (event.response.type == 'ErrorResponse') {
           this.fail('error', event.response.error);
         } else {
@@ -227,7 +219,7 @@ define(['core/streams', 'commons/events', 'commons/utils'], function(streams, ev
       // by sbt, not when sbt finishes the request.
       // Errors happen if there's a problem getting the request
       // to sbt.
-      if (data.type == 'RequestReceivedEvent') {
+      if (data.event == 'RequestReceivedEvent') {
         // do nothing, this is expected; wait for TaskComplete event
         // to fire the success callback.
       } else {
@@ -246,7 +238,7 @@ define(['core/streams', 'commons/events', 'commons/utils'], function(streams, ev
    * Runs an SBT task, attaching listeners for in-progress information
    * updates, or general success/failure. Returns the task ID.
    *
-   * @param o {Object}  An object havin the following format:
+   * @param o {Object}  An object having the following format:
    *        - task -> The task request, either a string or object with fields task, description, params
    *        - onmessage (optional)  ->  A handle for SBT events.
    *        - success (optional) -> A handler for when the request is successfully delivered.

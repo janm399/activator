@@ -111,7 +111,8 @@ define(['core/model', 'text!./run.html', 'core/pluginapi', 'widgets/log/log', 'c
 
       self.logModel.debug("launching discoveredMainClasses task");
       var taskId = sbt.runTask({
-        task: 'discovered-main-classes',
+        // TODO - ref: app.currentRef()
+        task: { request: 'MainClassRequest', sendEvents: true },
         onmessage: function(event) {
           console.log("event discovering main classes", event);
           self.logModel.event(event);
@@ -123,62 +124,32 @@ define(['core/model', 'text!./run.html', 'core/pluginapi', 'widgets/log/log', 'c
             return;
 
           var names = [];
-          if (data.type == 'GenericResponse') {
-            names = data.params.names;
-            self.logModel.debug("Discovered main classes: " + names);
+          if (data.response == 'MainClassResponse') {
+            var projects = data.projects;
+            for(var i = 0; i < projects.length; ++i) {
+              var project = projects[i];
+              var app = model.snap.app;
+              // TODO - For now we lock down the main class list to just the default project....
+              //        We should probably also check the build ref here...
+              if(app.currentRef() && (project.project.name == app.currentRef().name)) {
+                // Here we use the main classes.
+                self.logModel.debug("Default main class: " + project['default']);
+                self.logModel.debug("Discovered main classes: " + project.mainClasses);
+                // TODO - update status fields?
+                // TODO - handle issues with empty or missing main classes....
+                var mainClasses = project['default'] ? [ project['default'] ] : [];
+                if(project.mainClasses.length > 0) {
+                  mainClasses = project.mainClasses;
+                }
+                 success({
+                    name: project['default'],
+                    names: mainClasses
+                });
+              }
+            }
           } else {
             self.logModel.debug("No main classes discovered");
           }
-          self.logModel.debug("Got auto-discovered main classes, looking for a default mainClass setting if any");
-          function noDefaultMainClassLogging(message) {
-            if (names.length > 0) {
-              self.logModel.debug("Didn't find a default mainClass setting, we'll just pick one of: " + names);
-            } else {
-              if (message)
-                self.logModel.error(message);
-              self.logModel.error("Didn't auto-discover a main class, and no mainClass was set");
-            }
-          }
-          self.logModel.debug("launching mainClass task");
-          var taskId = sbt.runTask({
-            task: 'main-class',
-            onmessage: function(event) {
-              console.log("event getting default main class", event);
-              self.logModel.event(event);
-            },
-            success: function(data) {
-              console.log("default main class result", data);
-
-              if (taskCompleteShouldWeAbort())
-                return;
-
-              var name = '';
-              // 'name' won't be in here if mainClass was unset
-              if (data.type == 'GenericResponse' && 'name' in data.params) {
-                name = data.params.name;
-                self.logModel.debug("Default main class is '" + name + "'");
-              } else {
-                // this isn't what really happens if it's not configured, I think
-                // sbt just tries to ask the user to pick, which fails, and we
-                // get the failure callback. But log just in case.
-                noDefaultMainClassLogging();
-              }
-              success({ name: name, names: names });
-            },
-            failure: function(status, message) {
-              // a common reason for fail is that sbt tried to ask /dev/null to
-              // pick a main class manually.
-              console.log("getting default main class failed", message);
-
-              if (taskCompleteShouldWeAbort())
-                return;
-
-              noDefaultMainClassLogging();
-              // we don't treat this as failure, just as no default set
-              success({ name: '', names: names });
-            }
-          });
-          self.activeTask(taskId);
         },
         failure: function(status, message) {
           console.log("getting main classes failed", message);
@@ -321,42 +292,43 @@ define(['core/model', 'text!./run.html', 'core/pluginapi', 'widgets/log/log', 'c
 
       self.beforeRun();
 
-      var task = {};
+      // TODO - Pick a project to use...
+      var task = { request: 'RunRequest', sendEvents: true, useAtmos: false };
       if (self.haveMainClass()) {
-        task.task = 'run-main';
-        task.params = { mainClass: self.currentMainClass() };
-      } else {
-        task.task = 'run';
+        task.mainClass = self.currentMainClass();
       }
-
       if (self.runInConsole()) {
-        task.task = 'atmos:' + task.task;
+        task.useAtmos = true;
       }
 
       var taskId = sbt.runTask({
         task: task,
         onmessage: function(event) {
-          if (event.type == 'LogEvent') {
+          if (event.event == 'LogEvent') {
             var logType = event.entry.type;
             if (logType == 'stdout' || logType == 'stderr') {
               self.outputModel.event(event);
             } else {
               self.logModel.event(event);
             }
-          } else if (event.type == 'Started') {
+          } else if (event.event == 'RequestReceivedEvent') {
+            // Ignore
+          } else if (event.event == 'Started') {
             // our request went to a fresh sbt, and we witnessed its startup.
             // we may not get this event if an sbt was recycled.
             // we move "output" to "logs" because the output is probably
             // just sbt startup messages that were not redirected.
             self.logModel.moveFrom(self.outputModel);
-          } else if (event.id == 'playServerStarted') {
-            var port = event.params.port;
+          } else if (event.event == 'playServerStarted') {
+            var port = event.port;
+            var host = event.host;
             var url = 'http://localhost:' + port;
             self.playAppLink(url);
-          } else if (event.id == 'atmosStarted') {
-            self.atmosLink(event.params.uri);
+          } else if (event.event == 'atmosStarted') {
+            self.atmosLink(event.uri);
             api.events.send({ 'type' : 'AtmosStarted' });
           } else {
+            debugger;
             self.logModel.leftoverEvent(event);
           }
         },

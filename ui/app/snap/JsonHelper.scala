@@ -10,6 +10,46 @@ import scala.util.parsing.json.JSONArray
 
 /** Helper methods to convert between JSON libraries. */
 object JsonHelper {
+
+  def playJsonToRawMap(playJson: JsValue): Map[String, Any] =
+    playJson match {
+      case o: JsObject =>
+        for {
+          (key, value) <- o.fieldSet.toMap
+        } yield key -> playJsonToRaw(value)
+      case _ => throw new RuntimeException("Trying to put non-js-object into a Map[String,Any]")
+    }
+
+  def playJsonToRaw(playJson: JsValue): Any =
+    playJson match {
+      case JsBoolean(b) => b
+      case JsNumber(n) => n
+      case JsString(s) => s
+      case JsNull => null
+      case o: JsObject =>
+        for {
+          (key, value) <- o.fieldSet.toMap
+        } yield key -> playJsonToRaw(value)
+      case a: JsArray => a.value.map(playJsonToRaw)
+      case u: JsUndefined => throw new RuntimeException("undefined found in json")
+    }
+
+  def rawToPlayJson(value: Any): JsValue =
+    value match {
+      // always check null first since it's an instance of everything
+      case null => JsNull
+      case o: Map[String, Any] => JsObject(for {
+        (key, value) <- o.toSeq
+      } yield key -> rawToPlayJson(value))
+      case a: Seq[_] => JsArray(a.map(rawToPlayJson))
+      case b: Boolean => JsBoolean(b)
+      case n: Double => JsNumber(BigDecimal(n))
+      case n: Long => JsNumber(BigDecimal(n))
+      case n: Int => JsNumber(BigDecimal(n))
+      case s: String => JsString(s)
+      case u => throw new RuntimeException("Unknown thing to map into json: " + u)
+    }
+
   def playJsonToScalaJson(playJson: JsValue): JSONType = {
     def playJsonToScalaJsonValue(playJson: JsValue): Any = {
       playJson match {

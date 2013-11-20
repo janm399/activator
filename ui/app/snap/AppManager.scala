@@ -266,9 +266,14 @@ object AppManager {
         })), name = "request-manager-" + requestManagerCount.getAndIncrement())
       val resultFuture: Future[ProcessResult[AppConfig]] =
         (requestManager ? protocol.NameRequest(sendEvents = true)) map {
-          case protocol.NameResponse(name, _) => {
-            Logger.info("sbt told us the name is: '" + name + "'")
-            name
+          case protocol.NameResponse(projects) => {
+            Logger.info("sbt told us the projects are: '" + projects.mkString("', '") + "'")
+            // Here we use the default project for the name in Activator.
+            projects.find(_.default).map(_.name).getOrElse {
+              val name = location.getName
+              Logger.info("using file basename as app name: " + name)
+              name
+            }
           }
           case protocol.ErrorResponse(error) =>
             // here we need to just recover, because if you can't open the app

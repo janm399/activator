@@ -27,6 +27,8 @@ define(['webjars!knockout', './router', 'commons/settings', 'plugins/tutorial/tu
       build: build,
       app: {
         name: ko.observable(window.serverAppModel.name ? window.serverAppModel.name : window.serverAppModel.id),
+        projects: ko.observableArray([]),
+        currentRef: ko.observable(),
         hasAkka: ko.observable(false),
         hasPlay: ko.observable(false),
         hasConsole: ko.observable(false)

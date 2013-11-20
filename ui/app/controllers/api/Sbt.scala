@@ -61,9 +61,9 @@ object Sbt extends Controller {
     val taskDescription = (json \ "description").as[String]
     val taskJson = (json \ "task")
 
-    val taskMessage = protocol.Message.JsonRepresentationOfMessage.fromJson(playJsonToScalaJson(taskJson)) match {
-      case req: protocol.Request => req
-      case whatever => throw new RuntimeException("not a request: " + whatever)
+    val taskMessage = protocol.WireProtocol.fromRaw(playJsonToRawMap(taskJson)) match {
+      case Some(req: protocol.Request) => req
+      case whatever => throw new RuntimeException("not a request: " + taskJson)
     }
 
     val resultFuture = AppManager.loadApp(appId) flatMap { app =>
@@ -73,7 +73,7 @@ object Sbt extends Controller {
           case error: protocol.ErrorResponse => error
           case whatever => throw new RuntimeException("unexpected response: " + whatever)
         } map { message =>
-          Ok(scalaJsonToPlayJson(protocol.Message.JsonRepresentationOfMessage.toJson(message)))
+          Ok(rawToPlayJson(protocol.WireProtocol.toRaw(message)))
         }
       }
     }
@@ -110,10 +110,11 @@ object Sbt extends Controller {
               val filesSet = files.toSet
               Logger.debug(s"Sending app actor ${filesSet.size} source files")
               app.actor ! UpdateSourceFiles(filesSet)
-              Ok(JsObject(Seq("type" -> JsString("WatchTransitiveSourcesResponse"),
+              // TODO - Should we just send the response back completely?
+              Ok(JsObject(Seq("response" -> JsString("WatchTransitiveSourcesResponse"),
                 "count" -> JsNumber(filesSet.size))))
             case message: protocol.Message =>
-              Ok(scalaJsonToPlayJson(protocol.Message.JsonRepresentationOfMessage.toJson(message)))
+              Ok(rawToPlayJson(protocol.WireProtocol.toRaw(message)))
           }
       }
     }

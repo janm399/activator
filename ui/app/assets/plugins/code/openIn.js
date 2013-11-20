@@ -85,7 +85,7 @@ function(eclipseTemplate, ideaTemplate, api, Overlay, log){
         self.workingStatus("Generating " + self.ideName + " project files...");
         self.log.clear();
         var taskId = sbt.runTask({
-          task: self.taskName,
+          task: { request: 'ExecuteCommandRequest', command: self.taskName, sendEvents: true },
           onmessage: function(event) {
             console.log("event while generating " + self.ideName + " files ", event);
             self.log.event(event);

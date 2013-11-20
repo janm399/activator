@@ -78,7 +78,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
 
       self.status(api.STATUS_BUSY);
       var taskId = api.sbt.runTask({
-        task: 'name',
+        task: { request: 'NameRequest', sendEvents: true },
         onmessage: function(event) {
           console.log("event from name task ", event);
           self.logEvent(event);
@@ -88,11 +88,20 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
           self.activeTask("");
 
           var app = model.snap.app;
-          app.name(result.params.name);
-          app.hasAkka(result.params.hasAkka === true);
-          app.hasPlay(result.params.hasPlay === true);
-          app.hasConsole(result.params.hasConsole === true);
-
+          // Here we apply the *default* project's settings to our application.
+          // TODO - Move this into the sbt or "build" service.
+          var projects = result.projects.values;
+          app.projects(projects);
+          for(var i = 0; i < projects.length; ++i) {
+            var project = projects[i];
+            if(project['default']) {
+              app.currentRef(project.ref);
+              app.name(project.name)
+              app.hasAkka(project.attributes.hasAkka === true);
+              app.hasPlay(project.attributes.hasPlay === true);
+              app.hasConsole(project.attributes.hasConsole === true);
+            }
+          }
           model.logModel.debug("name=" + app.name() +
               " hasAkka=" + app.hasAkka() +
               " hasPlay=" + app.hasPlay() +
@@ -174,7 +183,7 @@ define(['text!./compile.html', 'core/pluginapi', 'core/model', 'css!./compile.cs
 
       self.status(api.STATUS_BUSY);
       model.logModel.info("Compiling...");
-      var task = { task: 'compile' };
+      var task = { request: 'CompileRequest', sendEvents: true };
       var taskId = sbt.runTask({
         task: task,
         onmessage: function(event) {

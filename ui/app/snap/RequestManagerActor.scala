@@ -51,16 +51,17 @@ class RequestManagerActor(taskId: String, taskActor: ActorRef, respondWhenReceiv
       val responseJsonInEvent = if (respondWhenReceived) {
         // since the actual response isn't sent to the requestor,
         // it needs to go in the TaskComplete
-        scalaJsonToPlayJson(protocol.Message.JsonRepresentationOfMessage.toJson(response))
+        rawToPlayJson(protocol.WireProtocol.toRaw(response))
       } else {
         // don't need to put data in TaskComplete event; it might be
         // kind of large (for example a list of files), so just
         // send it to one place, to the requestor.
         JsObject(Nil)
       }
+      // TODO - Do we need this wrapper? Shouldn't this be part of the raw protocol?
       eventHandler(JsObject(Seq("taskId" -> JsString(taskId),
         "event" -> JsObject(Seq(
-          "type" -> JsString("TaskComplete"),
+          "event" -> JsString("TaskComplete"),
           "response" -> responseJsonInEvent)))))
     }
   }
@@ -82,7 +83,7 @@ class RequestManagerActor(taskId: String, taskActor: ActorRef, respondWhenReceiv
   private def eventToSocket(event: protocol.Event): Unit = {
     log.debug("event: {}", event)
     // TODO - Safer hackery
-    val json = scalaJsonToPlayJson(protocol.Message.JsonRepresentationOfMessage.toJson(event))
+    val json = rawToPlayJson(protocol.WireProtocol.toRaw(event))
     eventHandler(JsObject(Seq("taskId" -> JsString(taskId), "event" -> json)))
   }
 

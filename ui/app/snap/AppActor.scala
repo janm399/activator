@@ -116,15 +116,16 @@ class AppActor(val config: AppConfig, val sbtProcessLauncher: SbtProcessLauncher
   }
 
   private def validateEvent(json: JsObject): Boolean = {
-    // we need either a toplevel "type" or a toplevel "taskId"
-    // and then a nested "event" with a "type"
-    val hasType = json \ "type" match {
+    // we need either a toplevel "event" or a toplevel "taskId"
+    // and then a nested "event" with a "event" string (type).
+    val hasType = json \ "event" match {
       case JsString(t) => true
       case _ => false
     }
     val hasTaskId = json \ "taskId" match {
       case JsString(t) =>
-        json \ "event" \ "type" match {
+        // This was renamed to 'event' from 'type'.
+        json \ "event" \ "event" match {
           case JsString(t) => true
           case _ => false
         }

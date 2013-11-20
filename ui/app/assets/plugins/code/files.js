@@ -199,7 +199,7 @@ define(['core/pluginapi'], function(api) {
       this.select();
     },
     onContextMenu: function(data, event) {
-      logging &&console.log(event);
+      console.log(event);
       // todo: show a context menu with rename & delete options
       this.startEditing();
     },
@@ -229,10 +229,10 @@ define(['core/pluginapi'], function(api) {
         var newName = this.editingText();
         if (newName.length > 0 && newName != this.name()) {
           rename(this.location, newName).done(function() {
-            logging &&console.log("Rename success");
+            console.log("Rename success");
             self.reloadParent();
           }).fail(function(err) {
-            logging &&console.log("Failed to rename: ", err);
+            console.log("Failed to rename: ", err);
             alert(err.responseText);
           });
         }

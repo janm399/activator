@@ -1,0 +1,83 @@
+<article class="request">
+    <table data-bind="with: req">
+        <thead>
+            <tr>
+                <th>Headers</span></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody class="listing">
+            <tr>
+                <td>Accept</td>
+                <td data-bind="foreach: requestInfo.headers.Accept">
+                    <span data-bind="text: $data"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Connection</td>
+                <td data-bind="foreach: requestInfo.headers.Connection">
+                    <span data-bind="text: $data"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Cookie</td>
+                <td data-bind="foreach: requestInfo.headers.Cookie">
+                    <span data-bind="text: $data"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Host</td>
+                <td data-bind="foreach: requestInfo.headers.Host">
+                    <span data-bind="text: $data"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Referer</td>
+                <td data-bind="foreach: requestInfo.headers.Referer">
+                    <span data-bind="text: $data"></span>
+                </td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th><span>Network</span></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody class="listing">
+            <tr><td>Bytes In</td><td data-bind="text: bytesIn"></td></tr>
+            <tr><td>Bytes Out</td><td data-bind="text: bytesOut"></td></tr>
+            <tr><td>Domain</td><td data-bind="text: invocationInfo.domain"></td></tr>
+            <tr><td>Host</td><td data-bind="text: host"></td></tr>
+            <tr><td>Node</td><td data-bind="text: node"></td></tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th><span>Request</span></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody class="listing">
+            <tr><td>Host</td><td data-bind="text: invocationInfo.host"></td></tr>
+            <tr><td>Http Method</td><td data-bind="text: invocationInfo.httpMethod"></td></tr>
+            <tr><td>Id</td><td data-bind="text: invocationInfo.id"></td></tr>
+            <tr><td>Path</td><td data-bind="text: invocationInfo.path"></td></tr>
+            <tr><td>Remote Address</td><td data-bind="text: invocationInfo.remoteAddress"></td></tr>
+            <tr><td>Uri</td><td data-bind="text: invocationInfo.uri"></td></tr>
+            <tr><td>Version</td><td data-bind="text: invocationInfo.version"></td></tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th><span>Response</span></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody class="listing">
+            <tr><td>Code</td><td data-bind="text: response.httpResponseCode, style: { color: response.httpResponseCode == 400 ? 'red' : ''}"></td></tr>
+            <tr><td>Controller</td><td data-bind="text: invocationInfo.controller"></td></tr>
+            <tr><td>Method</td><td data-bind="text: invocationInfo.method"></td></tr>
+            <tr><td>Result</td><td data-bind="text: summaryType"></td></tr>
+            <tr><td>Type</td><td data-bind="text: response.type"></td></tr>
+        </tbody>
+    </table>
+</article>

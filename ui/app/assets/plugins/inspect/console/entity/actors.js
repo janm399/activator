@@ -85,7 +85,7 @@ define(['text!./actors.html', 'core/pluginapi', '../widget', '../format', '../ho
       }
       return {
         'sortCommand': sortBy,
-        'paging': { 'offset': 0, 'limit': parseInt(this.limit(), 10) }
+        'paging': { 'offset': 1, 'limit': parseInt(this.limit(), 10) }
       };
     },
     onData: function(data) {

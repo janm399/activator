@@ -19,6 +19,7 @@ class ClientHandler extends Actor with ActorLogging {
   val overviewHandler = context.actorOf(Props[OverviewHandler], "overviewHandler")
   val actorsHandler = context.actorOf(Props[ActorsHandler], "actorsHandler")
   val playRequestsHandler = context.actorOf(Props[PlayRequestsHandler], "playRequestsHandler")
+  val playRequestHandler = context.actorOf(Props[PlayRequestHandler], "playRequestHandler")
 
   def receive = {
     case Tick => modules foreach callHandler
@@ -36,6 +37,7 @@ class ClientHandler extends Actor with ActorLogging {
       case "overview" => overviewHandler ! mi
       case "actors" => actorsHandler ! mi
       case "requests" => playRequestsHandler ! mi
+      case "request" => playRequestHandler ! mi
       case _ => log.debug("Unknown module name: {}", mi.name)
     }
   }

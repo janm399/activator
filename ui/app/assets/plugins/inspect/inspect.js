@@ -1,8 +1,8 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['main/pluginapi', './console/console', './console/connection', 'text!./inspect.html', 'css!./inspect.css'], function(api, Console, Connection, template){
-    var ko = api.ko;
+define(['main/pluginapi', 'services/build', './console/console', './console/connection', 'text!./inspect.html', 'css!./inspect.css'],
+  function(api, build, Console, Connection, template){
 
     var inspectConsole = api.PluginWidget({
         id: 'inspect-console-widget',
@@ -21,6 +21,15 @@ define(['main/pluginapi', './console/console', './console/connection', 'text!./i
             };
         },
         route: function(path) {
+            if (path == undefined || path.length == 0) {
+              if (build.app.hasPlay()) {
+                path = ["requests"];
+              } else if (build.app.hasAkka()) {
+                path = ["actors"];
+              } else {
+                path = ["deviations"];
+              }
+            }
             this.consoleWidget.route(path);
         }
     });

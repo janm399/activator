@@ -1,11 +1,12 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/utils', 'commons/events', './sbt', 'commons/markers'],
-    function(ko, settings, logModule, utils, events, sbt, markers){
+define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/utils', 'commons/events', './sbt', 'commons/markers', 'plugins/inspect/console/connection'],
+    function(ko, settings, logModule, utils, events, sbt, markers, Connection){
 
   settings.register("build.rerunOnBuild", true);
   settings.register("build.retestOnSuccessfulBuild", false);
+  settings.register("build.automaticFlushInspect", true);
   settings.register("build.recompileOnChange", true);
 
   var Error = utils.Class({
@@ -680,6 +681,10 @@ define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/util
       self.activeTask(taskId);
     },
     doRun: function() {
+      if (settings.build.automaticFlushInspect()) {
+        Connection.flush();
+      }
+
       if (this.reloadMainClassPending())
         this.doRunWithMainClassLoad();
       else

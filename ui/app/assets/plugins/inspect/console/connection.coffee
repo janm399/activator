@@ -45,6 +45,16 @@ define ->
         @sendQueue = []
       @
 
+    flush: ->
+      console.log "flushing inspect statistics"
+      this.send({
+        "commands": [
+          {
+            "module": "lifecycle",
+            "command": "reset"
+          }]
+      })
+
     send: (message) ->
       json = JSON.stringify message
       if @connected

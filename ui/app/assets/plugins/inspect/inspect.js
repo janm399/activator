@@ -9,16 +9,9 @@ define(['main/pluginapi', 'services/build', './console/console', './console/conn
         template: template,
         init: function() {
             this.consoleWidget = new Console();
-            this.reset = function() {
-                Connection.send({
-                    "commands": [
-                        {
-                            "module": "lifecycle",
-                            "command": "reset"
-                        }
-                    ]
-                });
-            };
+            this.flush = function() {
+              Connection.flush();
+            }
         },
         route: function(path) {
             if (path == undefined || path.length == 0) {

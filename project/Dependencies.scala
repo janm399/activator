@@ -10,7 +10,7 @@ object Dependencies {
   val luceneVersion = "4.2.1"
   val templateCacheVersion = "0.3.0"
   // echo enabled version (1.1.x)
-  val sbtRcVersion = "1.0-1863c3279ea431d2618eef450c4cffbb5c0b7cb3"
+  val sbtRcVersion = "1.0-147f6e9bab10295a4c4aa9e2abfa45d2c73a8af1"
 
   val playVersion = "2.2.1"
   val webJarsVersion = "2.2.0"

@@ -12,7 +12,7 @@
                 <dt>Main class: <span data-bind="text: currentMainClass">&nbsp;</span></dt>
                 <dd>
                     <!-- ko foreach: mainClasses -->
-                    <label><input type="radio" name="mainClass" data-bind="value: $data"><span data-bind="text: $data"></span></label>
+                    <label><input type="radio" name="mainClass" data-bind="value: $data, checked: $parent.currentMainClass"> <span data-bind="text: $data"></span></label>
                     <!-- /ko -->
                 </dd>
             </dl>

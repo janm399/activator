@@ -1,6 +1,9 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
+
+@import '../../commons/_base.less';
+
 #welcome-holder {
   width: 400px;
   margin-left: -200px;
@@ -21,6 +24,27 @@
     color: #fff;
     line-height: 40px;
     padding: 10px 20px;
+  }
+
+  .new-version {
+    background: @red;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    a {
+      display: block;
+      background: white;
+      color: @red;
+      font-size: 16px;
+      width: 200px;
+      margin: 10px auto;
+      text-transform: uppercase;
+      padding: 10px;
+      font-weight: 700;
+      &:hover {
+        color: @red - #222;
+      }
+    }
   }
 
   ul {

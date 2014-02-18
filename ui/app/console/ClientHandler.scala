@@ -118,7 +118,8 @@ trait RequestHelpers { this: ActorLogging =>
             dataFrom = i.dataFrom,
             sortCommand = i.sortCommand,
             sortDirection = i.sortDirection,
-            traceId = i.traceId)
+            traceId = i.traceId,
+            eventId = for { t <- i.traceId } yield new UUID(t))
           case None => sys.error(s"Could not find requested module: ${i.name}")
         }
       }

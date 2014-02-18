@@ -4,6 +4,7 @@ import scala.util.{ Failure, Success, Try }
 import scala.reflect.ClassTag
 import akka.event.LoggingAdapter
 import scala.language.implicitConversions
+import com.typesafe.trace.uuid.UUID
 
 object ClientModuleHandler {
   import activator.analytics.rest.http.SortingHelpers._
@@ -75,7 +76,7 @@ object ClientModuleHandler {
 
   implicit def toDeviationModuleInfo(in: RawModuleInformation): Try[DeviationModuleInfo] =
     Try {
-      DeviationModuleInfo(in.eventId.get)
+      DeviationModuleInfo(in.eventId.get, new UUID(in.traceId.get))
     }
 
   implicit def toDeviationsModuleInfo(in: RawModuleInformation): Try[DeviationsModuleInfo] =

@@ -1,11 +1,13 @@
-define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format', 'commons/templates', 'text!./tracetree.html'], function(template, api, ConsoleWidget, formatter, templates, traceTreeTemplate) {
+define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format', 'commons/templates', 'text!./tracetree.html'],
+  function(template, api, ConsoleWidget, formatter, templates, traceTreeTemplate) {
+
     var ko = api.ko;
     return api.Class(ConsoleWidget, {
         id: 'console-deviation-widget',
         template: template,
         init: function(args) {
             // Register trace tree template that is used in the deviation view
-            templates.registerTemplate("traceTreeTemplate", traceTreeTemplate);
+            templates.registerTemplate("trace-tree-template", traceTreeTemplate);
 
             var self = this;
             this.traceId = "unknown";
@@ -43,7 +45,6 @@ define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format',
                 return result;
             }
             // End: Helper functions
-
         },
         dataName: 'deviation',
         dataTypes: ['deviation'],
@@ -68,7 +69,7 @@ define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format',
             }
 
             this.extractReason(data.deviation);
-            this.traceTree(data.deviation);
+            this.traceTree(data.deviation.traceTree);
         }
     });
 });

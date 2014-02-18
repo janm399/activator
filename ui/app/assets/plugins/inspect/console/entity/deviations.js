@@ -66,16 +66,17 @@ define(['text!./deviations.html', 'main/pluginapi', './../widget', '../format'],
                 return newCollection;
             };
 
-            this.errors(this.format(data.deviations.errors, "Error"));
-            this.warnings(this.format(data.deviations.warnings, "Warning"));
-            this.deadLetters(this.format(data.deviations.deadLetters, "Deadletter"));
-            this.unhandledMessages(this.format(data.deviations.unhandledMessages, "Unhandled Message"));
-            this.deadlocks(this.format(data.deviations.deadlocks, "Deadlock"));
-            this.errorCount(data.deviations.errorCount);
-            this.warningCount(data.deviations.warningCount);
-            this.deadLetterCount(data.deviations.deadLetterCount);
-            this.unhandledMessageCount(data.deviations.unhandledMessageCount);
-            this.deadlockCount(data.deviations.deadlockCount);
+            // TODO - this is a temp hack => handle array values better
+            this.errors(this.format(data.deviations[0].errors, "Error"));
+            this.warnings(this.format(data.deviations[0].warnings, "Warning"));
+            this.deadLetters(this.format(data.deviations[0].deadletters, "Deadletter"));
+            this.unhandledMessages(this.format(data.deviations[0].unhandledMessages, "Unhandled Message"));
+            this.deadlocks(this.format(data.deviations[0].deadlocks, "Deadlock"));
+            this.errorCount(data.deviations[0].errorCount);
+            this.warningCount(data.deviations[0].warningCount);
+            this.deadLetterCount(data.deviations[0].deadLetterCount);
+            this.unhandledMessageCount(data.deviations[0].unhandledMessageCount);
+            this.deadlockCount(data.deviations[0].deadlockCount);
             this.deviationCount(deviations);
         }
     });

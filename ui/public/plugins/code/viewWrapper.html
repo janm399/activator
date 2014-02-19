@@ -1,9 +1,9 @@
 <!-- ko if: isFile() -->
 <header>
 	<nav>
-    <button class="delete groupLeft" data-bind="click: deleteFile"><span class="icon">&#xe729;</span>Delete</button>
-		<button class="revert groupMid" data-bind="click: subView().load, enable: subView().isDirty"><span class="icon">&#x27f2;</span>Revert</button>
-		<button class="save groupMid" data-bind="click: subView().save, enable: subView().isDirty"><span class="icon">&#xe778;</span>Save</button>
+        <span class="button delete groupLeft" data-bind="click: deleteFile"><span class="icon">&#xe729;</span>Delete</span>
+		<span class="button revert groupMid" data-bind="click: subView().load, enable: subView().isDirty"><span class="icon">&#x27f2;</span>Revert</span>
+		<span class="button save groupMid" data-bind="click: subView().save, enable: subView().isDirty"><span class="icon">&#xe778;</span>Save</span>
     <!-- ko if: canSwitchTheme() || canSetFontSize() -->
     <dl class="dropdown dropdownRightAlign groupRight">
       <dt><span class="icon">&#x2699;</span></dt>

@@ -13,7 +13,7 @@ object Dependencies {
   val sbtRcVersion = "1.0-147f6e9bab10295a4c4aa9e2abfa45d2c73a8af1"
 
   val playVersion = "2.2.1"
-  val webJarsVersion = "2.2.0"
+  val webJarsVersion = "2.2.1"
   val akkaVersion = "2.1.2"
   val slickVersion = "2.0.0"
   val echoPluginVersion = "0.1.0"

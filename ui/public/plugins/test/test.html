@@ -1,12 +1,12 @@
 <article class="test">
   <header>
     <nav>
-            <button class="start groupLeft" data-bind="click: startStopButtonClicked">
+            <span class="button start groupLeft" data-bind="click: startStopButtonClicked">
                 <span class="icon" data-bind="visible: !haveActiveTask()">&#x25b6;</span>
                 <span class="icon" data-bind="visible: haveActiveTask">&#x25a0;</span>
                 <span data-bind="text: startStopLabel"></span>
-            </button>
-            <button class="restart groupMid" data-bind="enable: haveActiveTask() && !restartPending(), click: restartButtonClicked"><span class="icon">&#x27f3;</span>Restart</button>
+            </span>
+            <span class="button restart groupMid" data-bind="enable: haveActiveTask() && !restartPending(), click: restartButtonClicked"><span class="icon">&#x27f3;</span>Restart</span>
             <dl class="dropdown dropdownRightAlign groupRight">
                 <dt><span class="icon">&#x2699;</span></dt>
                 <dd>

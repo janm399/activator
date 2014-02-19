@@ -86,7 +86,7 @@
         <button class="refresh" data-bind="toggle: settings.build.recompileOnChange, css: {active: settings.build.recompileOnChange }"></button>
         <span class="tooltip refresh" data-bind="text: settings.build.recompileOnChange() ? 'Rebuild on file changes enabled':'Rebuild on file changes disabled' "></span>
         <button class="console" data-bind="toggle: settings.build.automaticFlushInspect, css: {active: settings.build.automaticFlushInspect}"></button>
-        <span class="tooltip inspect" data-bind="text: settings.build.automaticFlushInspect() ? 'Automatic flushing of Inspect enabled':'Automatic flushing of Inspect disabled' "></span>
+        <span class="tooltip console" data-bind="text: settings.build.automaticFlushInspect() ? 'Automatic flushing of Inspect enabled':'Automatic flushing of Inspect disabled' "></span>
         <button class="testing" data-bind="toggle: settings.build.retestOnSuccessfulBuild, css: {active: settings.build.retestOnSuccessfulBuild}"></button>
         <span class="tooltip testing" data-bind="text: settings.build.retestOnSuccessfulBuild() ? 'Test on rebuild enabled':'Test on rebuild disabled' "></span>
       </div>

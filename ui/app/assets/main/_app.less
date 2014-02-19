@@ -55,19 +55,21 @@ article header nav {
 }
 
 article header {
-  button, dt {
+  .button, dt {
+    vertical-align: middle;
     background: white;
     color: @blue-dkr;
     font: inherit;
     font-size: 14px;
     font-weight: bold;
-    line-height: 25px;
     padding: 0 10px;
     margin: 0 5px;
     border-radius: 3px;
     height: 25px;
+    line-height: 25px;
     display: inline-block;
     cursor: pointer;
+    border: none;
     &:hover {
       background: @red-dkr;
       color: white;
@@ -81,17 +83,17 @@ article header {
       line-height: 25px;
     }
   }
-  button.groupLeft, dl.groupLeft dt {
+  .button.groupLeft, dl.groupLeft dt {
     margin-right: 1px;
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
   }
-  button.groupMid, dl.groupMid dt {
+  .button.groupMid, dl.groupMid dt {
     margin-right: 1px;
     margin-left: 0;
     border-radius: 0;
   }
-  button.groupRight, dl.groupRight dt {
+  .button.groupRight, dl.groupRight dt {
     margin-left: 0;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;

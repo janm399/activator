@@ -17,10 +17,11 @@ define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3'], function(templat
     var x = d3.scale.linear()
                 .domain([0, d3.max(data)])
                 .range([0, width]);
-    var bar = chart.selectAll("g")
-                      .data(data)
-                    .enter().append("g")
-                      .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+    var p = chart.selectAll("g").data(data);
+    p.exit().remove();
+    var bar = p.enter().append("g")
+               .attr("transform", function(d, i) { return "translate(0," + i * barHeight + ")"; });
+
     bar.append("rect")
          .attr("width", x)
          .attr("height", barHeight - 1);
@@ -40,8 +41,12 @@ define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3'], function(templat
       this.title = ko.observable("monitor");
     },
     collect: function(parameters) {
-        alert("collect");
-        dthree([1, 2, 3, 4, 5, 1, 4, 5, 1]);
+        var count = 5 + Math.round(Math.random() * 10);
+        var counters = [];
+        for (i = 0; i < count; i++) {
+            counters[i] = Math.round(Math.random() * 100);
+        }
+        dthree(counters);
     }
   });
 

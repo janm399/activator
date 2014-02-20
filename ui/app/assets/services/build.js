@@ -118,7 +118,7 @@ define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/util
     name: ko.observable(window.serverAppModel.name ? window.serverAppModel.name : window.serverAppModel.id),
     hasAkka: ko.observable(false),
     hasPlay: ko.observable(false),
-    hasConsole: ko.observable(false)
+    hasEcho: ko.observable(false)
   };
 
   var compile = utils.Singleton({
@@ -190,12 +190,12 @@ define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/util
           app.name(result.params.name);
           app.hasAkka(result.params.hasAkka === true);
           app.hasPlay(result.params.hasPlay === true);
-          app.hasConsole(result.params.hasConsole === true);
+          app.hasEcho(result.params.hasEcho === true);
 
           log.debug("name=" + app.name() +
               " hasAkka=" + app.hasAkka() +
               " hasPlay=" + app.hasPlay() +
-              " hasConsole=" + app.hasConsole());
+              " hasEcho=" + app.hasEcho());
 
           self.compileAfterReloadProjectInfo();
         },
@@ -625,10 +625,14 @@ define(['webjars!knockout', 'commons/settings', 'widgets/log/log', 'commons/util
 
       var task = {};
       if (self.haveMainClass() && !mainClassIsPlayServer) {
-        task.task = 'echo:run-main';
+        task.task = 'run-main';
         task.params = { mainClass: self.currentMainClass() };
       } else {
-        task.task = 'echo:run';
+        task.task = 'run';
+      }
+
+      if (build.app.hasEcho()) {
+        task.task = 'echo:' + task.task;
       }
 
       debug && console.log("launching " + task.task + " task");

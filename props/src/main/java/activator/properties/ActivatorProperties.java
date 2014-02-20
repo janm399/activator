@@ -151,7 +151,10 @@ public class ActivatorProperties {
   }
 
   public static String ACTIVATOR_VERSION_FILE() {
-    return ACTIVATOR_UNVERSIONED_USER_HOME() + "/version.properties";
+    // this filename is also constructed in the launcher config file, so keep
+    // in sync with that...
+    return ACTIVATOR_UNVERSIONED_USER_HOME() + "/version-" + ACTIVATOR_LAUNCHER_GENERATION()
+        + ".properties";
   }
 
   // where to get the latest version
@@ -163,7 +166,7 @@ public class ActivatorProperties {
   // So we would bump this if we want to require people to
   // update their launcher.
   public static int ACTIVATOR_LAUNCHER_GENERATION() {
-    return Integer.parseInt(lookupOr("activator.launcher.generation", "0"));
+    return Integer.parseInt(requirePropertyWithOverrides("activator.launcher.generation"));
   }
 
   public static String ACTIVATOR_TEMPLATE_CACHE() {
@@ -218,5 +221,14 @@ public class ActivatorProperties {
 
   public static java.io.File ACTIVATOR_PID_FILE() {
     return new java.io.File(ACTIVATOR_VERSIONED_USER_HOME() + "/.currentpid");
+  }
+
+  public static boolean ACTIVATOR_CHECK_FOR_UPDATES() {
+    try {
+      return Boolean.parseBoolean(lookupOr("activator.checkForUpdates", "true"));
+    } catch (Exception e) {
+      System.err.println("Warning: bad value for activator.checkForUpdates: " + e.getMessage());
+      return true;
+    }
   }
 }

@@ -101,7 +101,7 @@ object Packaging {
 
     repackagedLaunchJar <<= (target, sbtLaunchJar, repackagedLaunchMappings) map repackageJar,
     repackagedLaunchMappings := Seq.empty,
-    repackagedLaunchMappings <+= (target, scalaVersion, version) map makeLauncherProps,
+    repackagedLaunchMappings <+= (target, scalaVersion, version, Properties.launcherGeneration in TheActivatorBuild.props) map makeLauncherProps,
 
     scriptTemplateDirectory := sourceDirectory.value / "templates",
     scriptTemplateOutputDirectory := (target in Compile).value / "templates",
@@ -178,7 +178,7 @@ object Packaging {
 
   // NOTE; Shares boot directory with SBT, good thing or bad?  not sure.
   // TODO - Just put this in the sbt-launch.jar itself!
-  def makeLauncherProps(target: File, scalaVersion: String, version: String): (File, String) = {
+  def makeLauncherProps(target: File, scalaVersion: String, version: String, launcherGeneration: Int): (File, String) = {
     val tdir = target / "generated-sources"
     if(!tdir.exists) tdir.mkdirs()
     val tprops = tdir / (name + ".properties")
@@ -205,14 +205,14 @@ object Packaging {
 
 [boot]
  directory: ${sbt.boot.directory-${sbt.global.base-${user.home}/.sbt}/boot/}
- properties: ${activator.boot.properties-${user.home}/.activator/version.properties}
+ properties: ${activator.boot.properties-${user.home}/.activator/version-${activator.launcher.generation-%d}.properties}
 
 [ivy]
   ivy-home: ${user.home}/.ivy2
   checksums: ${sbt.checksums-sha1,md5}
   override-build-repos: ${sbt.override.build.repos-false}
   repository-config: ${sbt.repository.config-${sbt.global.base-${user.home}/.sbt}/repositories}
-""" format(scalaVersion, version))
+""" format(scalaVersion, version, launcherGeneration))
     tprops -> "sbt/sbt.boot.properties"
   }
 

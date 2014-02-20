@@ -6,7 +6,7 @@ package activator
 import xsbti.{ AppMain, AppConfiguration }
 import activator.properties.ActivatorProperties._
 import java.io.File
-import java.net.{ PasswordAuthentication, Authenticator, InetSocketAddress, HttpURLConnection }
+import java.net._
 import scala.util.control.NonFatal
 import java.util.Properties
 import java.io.FileOutputStream
@@ -15,6 +15,7 @@ import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 import java.net.Authenticator.RequestorType
+import java.awt.Desktop
 
 /** Expose for SBT launcher support. */
 class ActivatorLauncher extends AppMain {
@@ -32,18 +33,51 @@ class ActivatorLauncher extends AppMain {
     } catch {
       case e: Exception => generateErrorReport(e)
     }
+
   // Wrapper to return exit codes.
   case class Exit(val code: Int) extends xsbti.Exit
 
+  def openDocs() = {
+    val file = new File(ACTIVATOR_HOME, "README.html")
+
+    val readmeUrl = if (file.exists()) {
+      file.toURI
+    } else {
+      new URI("http://typesafe.com/activator/docs")
+    }
+
+    def iCannaeDoIt(): Unit =
+      println(s"""|Unable to open the docs in your web browser.  To open them manually navigate to:
+                  |$readmeUrl""".stripMargin)
+
+    val desktop: Option[Desktop] =
+      if (Desktop.isDesktopSupported)
+        Some(Desktop.getDesktop) filter (_ isSupported Desktop.Action.BROWSE)
+      else None
+
+    desktop match {
+      case Some(d) =>
+        try {
+          d browse readmeUrl
+        } catch {
+          case _: Exception => iCannaeDoIt()
+        }
+      case _ => iCannaeDoIt()
+    }
+  }
+
   def displayHelp(configuration: AppConfiguration) = {
+
+    openDocs()
+
     System.err.println(s"""| Did not detect an ${SCRIPT_NAME} project in this directory.
-                          |
-                          | There are three ways to run ${SCRIPT_NAME}:
-                          |
-                          | 1. Recommended: try `${SCRIPT_NAME} ui` to create a project in the UI
-                          | 2. Use `${SCRIPT_NAME} new` to create a project on the command line
-                          | 3. Load an existing project by re-running ${SCRIPT_NAME} in a project directory
-                          |""".stripMargin)
+                           |
+                           | There are three ways to run ${SCRIPT_NAME}:
+                           |
+                           | 1. Recommended: try `${SCRIPT_NAME} ui` to create a project in the UI
+                           | 2. Use `${SCRIPT_NAME} new` to create a project on the command line
+                           | 3. Load an existing project by re-running ${SCRIPT_NAME} in a project directory
+                           |""".stripMargin)
     Exit(1)
   }
 
@@ -141,8 +175,8 @@ class ActivatorLauncher extends AppMain {
 
       versionOption flatMap { version =>
         val launcherGenerationRegex = """.*"launcherGeneration" *: *([0-9]+).*""".r
-        val latestLauncherGeneration = line match {
-          case launcherGenerationRegex(g) => g
+        val latestLauncherGeneration: Int = line match {
+          case launcherGenerationRegex(g) => Integer.parseInt(g)
           case other => 0 // typesafe.com didn't include launcherGeneration in its json for gen 0
         }
         if (currentLauncherGeneration == latestLauncherGeneration) {
@@ -167,7 +201,8 @@ class ActivatorLauncher extends AppMain {
     val now = System.currentTimeMillis()
 
     // if the time ends up in the future, assume something is haywire
-    val needCheck = lastSuccessfulCheck > now || (now - lastSuccessfulCheck) > TimeUnit.HOURS.toMillis(4)
+    val needCheck = ACTIVATOR_CHECK_FOR_UPDATES &&
+      (lastSuccessfulCheck > now || (now - lastSuccessfulCheck) > TimeUnit.HOURS.toMillis(4))
 
     if (needCheck) {
       downloadLatestVersion() map { version =>

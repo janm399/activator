@@ -84,7 +84,7 @@ To create a distribution optionally create a tag and then run:
 
 This generates the file `dist/target/universal/typeasafe-activator-<VERSION>.zip`.
 
-Activator auto-checks for new versions so to test a new unreleased version you will need to start Activator with the `-Dactivator.launcher.generation=34324435` flag.  If you don't set this Activator will use the latest released version instead of the newly created one.
+Activator auto-checks for new versions so to test a new unreleased version you will need to start Activator with the `-Dactivator.checkForUpdates=false` flag.  If you don't set this Activator will use the latest released version instead of the newly created one.
 
 ## Publishing the Distribution
 

@@ -74,6 +74,7 @@ object Dependencies {
   val requireCss       = "org.webjars" % "require-css" % "0.0.7-3"
   val requireText      = "org.webjars" % "requirejs-text" % "2.0.10"
   val keymage          = "org.webjars" % "keymage" % "1.0.1"
+  val d3js             = "org.webjars" % "d3js" % "3.4.1"
 
   // Analyzers used by Inspect
   val activatorAnalytics = "com.typesafe.activator"  %% "analytics" % activatorAnalyticsVersion

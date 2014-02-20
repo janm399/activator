@@ -117,6 +117,9 @@
           <a data-bind="attr: { href: plugins.lookup.inspect.url }, isActiveUrl: '#inspect'">Inspect <span class="working"
             data-bind="visible: build.activity.inspecting"></span><span class="counter"
             data-bind="text: build.errors.inspect().length, visible: build.errors.inspect().length > 0"></span></a>
+          <a data-bind="attr: { href: plugins.lookup.monitor.url }, isActiveUrl: '#monitor-local'">Monitor <span class="working"
+            data-bind="visible: build.activity.monitoring"></span><span class="counter"
+            data-bind="text: '0', visible: false"></span></a>
         </dd>
         @*
         <dt>Team</dt>

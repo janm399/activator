@@ -31,6 +31,11 @@ define(['text!./overview.html', 'main/pluginapi', './widget', './format'], funct
       this.requests(data.metadata.playPatternCount);
       this.deviations(data.deviations.deviationCount);
     },
+    dataRequest: function() {
+      return {
+        'paging': { 'offset': 0, 'limit': 10000 }
+      };
+    },
     shorten: function(count) {
       return format.shortenNumber(count);
     }

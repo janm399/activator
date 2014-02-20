@@ -39,7 +39,8 @@ class ClientController extends Actor with ActorLogging {
           playRequestHandlerProps = Props(new PlayRequestHandler(Props[PlayRequestJsonBuilder])),
           deviationsHandlerProps = Props(new DeviationsHandler(Props[DeviationsJsonBuilder], defaultLimit)),
           deviationHandlerProps = Props(new DeviationHandler(Props[DeviationJsonBuilder])),
-          lifecycleHandlerProps = Props[LifecycleHandler])), id) forward InitializeCommunication
+          lifecycleHandlerProps = Props[LifecycleHandler],
+          monitorHandlerProps = Props(new MonitorHandler(Props[MonitorJsonBuilder], defaultLimit)))), id) forward InitializeCommunication
     case Tick => context.children foreach { _ ! Tick }
   }
 }

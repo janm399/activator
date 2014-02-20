@@ -31,6 +31,7 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
   def deviationsHandlerProps: Props
   def deviationHandlerProps: Props
   def lifecycleHandlerProps: Props
+  def monitorHandlerProps: Props
 
   var handlers = Seq.empty[RawInformationBase]
   val (enum, channel) = Concurrent.broadcast[JsValue]
@@ -44,6 +45,7 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
   val deviationsHandler = context.actorOf(deviationsHandlerProps, "deviationsHandler")
   val deviationHandler = context.actorOf(deviationHandlerProps, "deviationHandler")
   val lifecycleHandler = context.actorOf(lifecycleHandlerProps, "lifecycleHandler")
+  val monitorHandler = context.actorOf(monitorHandlerProps, "monitorHandler")
 
   def onOverviewRequest(in: OverviewHandler.OverviewModuleInfo): Unit = overviewHandler ! in
   def onActorsRequest(in: ActorsHandler.ActorsModuleInfo): Unit = actorsHandler ! in
@@ -77,7 +79,8 @@ class ClientHandler(val jsonHandlerProps: Props,
   val playRequestHandlerProps: Props,
   val deviationsHandlerProps: Props,
   val deviationHandlerProps: Props,
-  val lifecycleHandlerProps: Props) extends ClientHandlerBase
+  val lifecycleHandlerProps: Props,
+  val monitorHandlerProps: Props) extends ClientHandlerBase
 
 class JsonHandler extends Actor with ActorLogging with RequestHelpers {
   import ClientController._

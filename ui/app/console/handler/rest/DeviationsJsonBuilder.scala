@@ -58,6 +58,15 @@ object DeviationsJsonBuilder {
   private def generateActorStats(stats: Seq[ActorStats]): JsValue = {
     Json.toJson(stats.map(i =>
       Json.obj(
-        "node" -> "")))
+        "errorCount" -> i.metrics.counts.errorCount,
+        "errors" -> extract(i.metrics.deviationDetails.errors),
+        "warningCount" -> i.metrics.counts.warningCount,
+        "warnings" -> extract(i.metrics.deviationDetails.warnings),
+        "deadletterCount" -> i.metrics.counts.deadLetterCount,
+        "deadletters" -> extract(i.metrics.deviationDetails.deadLetters),
+        "unhandledMessageCount" -> i.metrics.counts.unhandledMessageCount,
+        "unhandledMessages" -> extract(i.metrics.deviationDetails.unhandledMessages),
+        "deadlockCount" -> i.metrics.deviationDetails.deadlockedThreads.size,
+        "deadlocks" -> extract(i.metrics.deviationDetails.deadlockedThreads))))
   }
 }

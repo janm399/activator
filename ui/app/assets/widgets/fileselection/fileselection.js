@@ -100,7 +100,26 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'webjars!knockou
     },
     gotoParent: function() {
       var self = this;
-      self.load("/" + self.shownDirectory().split("/").slice(1,-1).join("/"));
+      if (separator == "/") {
+        // Unix
+        self.load("/" + self.shownDirectory().split("/").slice(1,-1).join("/"));
+      }
+      else {
+        // Windows
+        // assumes single char drive letters
+        if (self.shownDirectory().length == 3) {
+          // C:\ -> Drive listing
+          self.loadRoots();
+        }
+        else if (self.shownDirectory().split("\\").length == 2) {
+          // C:\Users -> C:\
+          self.load(self.shownDirectory().substr(0, 3))
+        }
+        else {
+          // C:\Users\foo -> C:\Users
+          self.load(self.shownDirectory().substr(0, self.shownDirectory().lastIndexOf("\\")));
+        }
+      }
     },
     highlight: function(file) {
       $.each($.grep(this.currentFiles(), fileIsHighlighted), function(idx, item) {
@@ -121,7 +140,7 @@ define(['css!./fileselection.css', 'text!./fileselection.html', 'webjars!knockou
     load: function(dir) {
       var self = this;
       browse(dir).done(function(values) {
-        self.shownDirectory(dir);
+        self.shownDirectory(values.humanLocation);
         var fileConfigs = [];
         fileConfigs.push.apply(fileConfigs, values.children || []);
         fileConfigs.sort(function(fileConfig1, fileConfig2) {

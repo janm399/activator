@@ -8,6 +8,8 @@ define(['main/pluginapi', 'services/build', './console/console', './console/conn
         id: 'inspect-console-widget',
         template: template,
         init: function() {
+            // When we start a new application the data should always be flushed
+            Connection.flush();
             this.consoleWidget = new Console();
             this.flush = function() {
               Connection.flush();

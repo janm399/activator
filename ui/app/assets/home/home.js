@@ -159,7 +159,7 @@ var startApp = function() {
           appLocationInput.val('');
         }
         var currentAppName = appNameInput.val() || appNameInput.attr('placeholder') || '';
-        appLocationInput.attr('placeholder', evilLocationStore + '/' + currentAppName);
+        appLocationInput.attr('placeholder', evilLocationStore + separator + currentAppName);
       }
       appNameInput.on('keyup', function() {
         checkFormReady();
@@ -217,7 +217,7 @@ var startApp = function() {
         onSelect: function(file) {
           // Update our store...
           $("#newAppLocationBrowser .close").trigger("click");
-          $("#newappLocation").val(file +"/"+ $("#appName").val());
+          $("#newappLocation").val(file + separator + $("#appName").val());
         },
         onCancel: function() {
           toggleDirectoryBrowser();

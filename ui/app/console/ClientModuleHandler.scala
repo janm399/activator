@@ -12,6 +12,7 @@ object ClientModuleHandler {
   import OverviewHandler.OverviewModuleInfo, ActorHandler.ActorModuleInfo, ActorsHandler.ActorsModuleInfo, DeviationHandler.DeviationModuleInfo
   import DeviationsHandler.DeviationsModuleInfo, PlayRequestHandler.PlayRequestModuleInfo, PlayRequestsHandler.PlayRequestsModuleInfo
   import LifecycleHandler.LifecycleModuleInfo
+  import MonitorHandler.MonitorModuleInfo
 
   sealed abstract class Handler(val name: String) {
     override def toString: String = name
@@ -25,6 +26,7 @@ object ClientModuleHandler {
   case object DeviationsModule extends Handler("deviations")
   case object DeviationModule extends Handler("deviation")
   case object LifecycleModule extends Handler("lifecycle")
+  case object MonitorModule extends Handler("monitordata")
 
   def fromString(in: String): Option[Handler] = in match {
     case "overview" => Some(OverviewModule)
@@ -35,6 +37,7 @@ object ClientModuleHandler {
     case "deviations" => Some(DeviationsModule)
     case "deviation" => Some(DeviationModule)
     case "lifecycle" => Some(LifecycleModule)
+    case "monitordata" => Some(MonitorModule)
     case _ => None
   }
 
@@ -112,6 +115,11 @@ object ClientModuleHandler {
     Try {
       LifecycleModuleInfo(LifecycleHandler.extractCommand(in.command))
     }
+
+  implicit def toMonitorModuleInfo(in: RawModuleInformation): Try[MonitorModuleInfo] =
+    Try {
+      MonitorModuleInfo()
+    }
 }
 
 trait ClientModuleHandler {
@@ -128,6 +136,7 @@ trait ClientModuleHandler {
   def onDeviationsRequest(in: DeviationsHandler.DeviationsModuleInfo): Unit
   def onDeviationRequest(in: DeviationHandler.DeviationModuleInfo): Unit
   def onLifecycleRequest(in: LifecycleHandler.LifecycleModuleInfo): Unit
+  def onMonitorRequest(in: MonitorHandler.MonitorModuleInfo): Unit
 
   def tryExtract[M <: ModuleInformationBase, N](in: N)(body: M => Unit)(implicit conv: N => Try[M], ct: ClassTag[M]): Unit =
     conv(in) match {
@@ -146,6 +155,7 @@ trait ClientModuleHandler {
           case RequestModule => tryExtract[PlayRequestHandler.PlayRequestModuleInfo, RawModuleInformation](rmi)(onPlayRequestRequest)
           case DeviationsModule => tryExtract[DeviationsHandler.DeviationsModuleInfo, RawModuleInformation](rmi)(onDeviationsRequest)
           case DeviationModule => tryExtract[DeviationHandler.DeviationModuleInfo, RawModuleInformation](rmi)(onDeviationRequest)
+          case MonitorModule => tryExtract[MonitorHandler.MonitorModuleInfo, RawModuleInformation](rmi)(onMonitorRequest)
           case _ => log.debug("Unknown module name: {}", rmi.handler)
         }
       case rci: RawCommandInformation =>

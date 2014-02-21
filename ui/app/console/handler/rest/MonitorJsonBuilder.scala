@@ -19,5 +19,5 @@ object MonitorJsonBuilder {
 
   def createJson(data: MonitorData): JsObject = Json.obj("category" -> data.category, "value" -> data.value)
 
-  def createJson(data: List[MonitorData]): JsObject = Json.obj("type" -> "monitordata", "data" -> Json.arr(data.map(createJson)))
+  def createJson(data: List[MonitorData]): JsObject = Json.obj("type" -> "monitordata", "data" -> data.map(createJson))
 }

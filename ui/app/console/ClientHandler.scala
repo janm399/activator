@@ -55,6 +55,7 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
   def onDeviationsRequest(in: DeviationsHandler.DeviationsModuleInfo): Unit = deviationsHandler ! in
   def onDeviationRequest(in: DeviationHandler.DeviationModuleInfo): Unit = deviationHandler ! in
   def onLifecycleRequest(in: LifecycleHandler.LifecycleModuleInfo): Unit = lifecycleHandler ! in
+  def onMonitorRequest(in: MonitorHandler.MonitorModuleInfo): Unit = monitorHandler ! in
 
   def receive = {
     case Tick => handlers filter { m => !ClientModuleHandler.oneTimeHandlers.contains(m.handler) } foreach callHandler

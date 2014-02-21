@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3', './console/connection'], function (template, api, d3, Connection) {
+define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3', './connection'], function (template, api, d3, Connection) {
 
     var ko = api.ko;
     var sbt = api.sbt;
@@ -35,25 +35,37 @@ define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3', './console/connec
                 Connection.flush();
             }
 
+            this.defaultTime = { "startTime": "", "endTime": "", "rolling": "20minutes" };
             Connection.init(self.defaultTime);
             Connection.open(consoleWsUrl, function () {});
+            Connection.updateModules([ self ]);
 
             this.title = ko.observable("monitor");
         },
         collect: function (parameters) {
             var count = 5 + Math.round(Math.random() * 10);
             var counters = [];
-            for (i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 counters[i] = Math.round(Math.random() * 100);
             }
             dthree(counters);
+        },
+        dataName: 'monitordata',
+        dataTypes: ['monitordata'],
+        dataRequest: function() {
+            return {};
+        },
+        onData: function(data) {
+            var values = data.map(function(d) { return d.value });
+            dthree([]);
+            dthree(values);
         }
     });
 
     return api.Plugin({
         id: 'monitor',
         name: "Monitor",
-        icon: "⌮",
+        icon: "M",
         url: "#monitor",
         routes: {
             'monitor': function () {

@@ -26,7 +26,18 @@ define(['main/pluginapi', 'services/build', './console/console', './console/conn
               }
             }
             this.consoleWidget.route(path);
+        },
+        dataName: 'actors',
+        dataTypes: ['actors'],
+        dataRequest: function() {
+            return {
+                'paging': { 'offset': 0, 'limit': parseInt(this.limit(), 10) }
+            };
+        },
+        onData: function(data) {
+            console.log(data);
         }
+
     });
 
     return api.Plugin({

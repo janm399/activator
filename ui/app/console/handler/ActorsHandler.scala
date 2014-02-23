@@ -11,8 +11,15 @@ import activator.analytics.repository.ActorStatsSorted
 import console.PagingInformation
 import console.ScopeModifiers
 import activator.analytics.rest.http.SortingHelpers.SortDirection
+import console.handler.rest.ActorsJsonBuilder
+import console.AnalyticsRepository
 
 object ActorsHandler {
+  def props(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    builderProps: Props = ActorsJsonBuilder.props()) =
+    Props(classOf[ActorsHandler], repository, builderProps, defaultLimit)
+
   case class ActorsModuleInfo(scope: Scope,
     modifiers: ScopeModifiers,
     time: TimeRange,
@@ -54,7 +61,9 @@ trait ActorsHandlerBase extends PagingRequestHandlerLike[ActorStatsSort, ActorsH
   }
 }
 
-class ActorsHandler(builderProps: Props, val defaultLimit: Int) extends PagingRequestHandler[ActorStatsSort, ActorsHandler.ActorsModuleInfo] with ActorsHandlerBase {
+class ActorsHandler(val repository: AnalyticsRepository,
+  builderProps: Props,
+  val defaultLimit: Int) extends PagingRequestHandler[ActorStatsSort, ActorsHandler.ActorsModuleInfo] with ActorsHandlerBase {
   val builder = context.actorOf(builderProps, "actorsBuilder")
 
   def useActorStats(sender: ActorRef, stats: ActorStatsSorted): Unit = {

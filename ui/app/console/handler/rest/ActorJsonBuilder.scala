@@ -3,10 +3,10 @@
  */
 package console.handler.rest
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, Props }
 import console.ClientController.Update
 import activator.analytics.data.{ Scope, ActorStats }
-import play.api.libs.json.{ JsString, JsValue, Json, JsObject }
+import play.api.libs.json.{ Json, JsObject, JsValue, JsArray, Writes, JsString }
 import activator.analytics.data.BasicTypes.DurationNanos
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit._
@@ -21,6 +21,11 @@ class ActorJsonBuilder extends JsonBuilderActor {
 
 object ActorJsonBuilder {
   import ScopeJsonBuilder._
+  import TimeRangeJsonBuilder._
+  import DevationDetailJsonBuilder._
+
+  def props(): Props =
+    Props(classOf[ActorJsonBuilder])
 
   val DefaultOutputDurationTimeUnit = MICROSECONDS
 
@@ -34,13 +39,12 @@ object ActorJsonBuilder {
           "actor" -> createActorJson(stats)))
   }
 
+  def createActorJsonSeq(statsSeq: Seq[ActorStats]): JsArray =
+    new JsArray(statsSeq.map(createActorJson(_)))
+
   def createActorJson(stats: ActorStats): JsObject = {
     Json.obj(
-      "timerange" ->
-        Json.obj(
-          "startTime" -> stats.timeRange.startTime,
-          "endTime" -> stats.timeRange.endTime,
-          "rangeType" -> stats.timeRange.toString),
+      "timerange" -> createTimeRangeJson(stats.timeRange),
       "scope" -> createScopeJson(stats.scope),
       "createdCount" -> stats.metrics.counts.createdCount,
       "stoppedCount" -> stats.metrics.counts.stoppedCount,
@@ -48,9 +52,15 @@ object ActorJsonBuilder {
       "restartCount" -> stats.metrics.counts.restartCount,
       "deviationCount" -> stats.metrics.counts.deviationCount,
       "errorCount" -> stats.metrics.counts.errorCount,
+      "errors" -> createDeviationDetailJsonSeq(stats.metrics.deviationDetails.errors),
       "warningCount" -> stats.metrics.counts.warningCount,
-      "deadLetterCount" -> stats.metrics.counts.deadLetterCount,
+      "warnings" -> createDeviationDetailJsonSeq(stats.metrics.deviationDetails.warnings),
+      "deadletterCount" -> stats.metrics.counts.deadLetterCount,
+      "deadletters" -> createDeviationDetailJsonSeq(stats.metrics.deviationDetails.deadLetters),
       "unhandledMessageCount" -> stats.metrics.counts.unhandledMessageCount,
+      "unhandledMessages" -> createDeviationDetailJsonSeq(stats.metrics.deviationDetails.unhandledMessages),
+      "deadlockCount" -> stats.metrics.deviationDetails.deadlockedThreads.size,
+      "deadlocks" -> createDeviationDetailJsonSeq(stats.metrics.deviationDetails.deadlockedThreads),
       "processedMessagesCount" -> stats.metrics.counts.processedMessagesCount,
       "tellMessagesCount" -> stats.metrics.counts.tellMessagesCount,
       "askMessagesCount" -> stats.metrics.counts.askMessagesCount,

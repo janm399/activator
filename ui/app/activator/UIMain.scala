@@ -45,7 +45,7 @@ object PidDetector {
       for {
         line <- pb.lines
         p <- line.split("\\s+").filterNot(_.isEmpty).headOption
-        if p contains pid
+        if p == pid
       } return true
       false
     } catch {

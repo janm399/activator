@@ -9,7 +9,9 @@
             </thead>
             <tbody class="listing" data-bind="foreach: {data: errors}">
             <tr>
-                <td class="message" data-bind="text:message"></td>
+                <td class="message">
+                    <a href="#" data-bind="text: message, attr: { href: eventLink, 'data-hover-text': hover }"></a>
+                </td>
                 <td class="timestamp" data-bind="text: timestamp"></td>
             </tr>
             </tbody>
@@ -22,7 +24,9 @@
             </thead>
             <tbody class="listing" data-bind="foreach: {data: warnings}">
             <tr>
-                <td class="message" data-bind="text:message"></td>
+                <td class="message">
+                    <a href="#" data-bind="text: message, attr: { href: eventLink, 'data-hover-text': hover }"></a>
+                </td>
                 <td class="timestamp" data-bind="text: timestamp"></td>
             </tr>
             </tbody>
@@ -35,7 +39,9 @@
             </thead>
             <tbody class="listing" data-bind="foreach: {data: deadLetters}">
             <tr>
-                <td class="message" data-bind="text:message"></td>
+                <td class="message">
+                    <a href="#" data-bind="text: message, attr: { href: eventLink, 'data-hover-text': hover }"></a>
+                </td>
                 <td class="timestamp" data-bind="text: timestamp"></td>
             </tr>
             </tbody>
@@ -48,7 +54,9 @@
             </thead>
             <tbody class="listing" data-bind="foreach: {data: unhandledMessages}">
             <tr>
-                <td class="message" data-bind="text:message"></td>
+                <td class="message">
+                    <a href="#" data-bind="text: message, attr: { href: eventLink, 'data-hover-text': hover }"></a>
+                </td>
                 <td class="timestamp" data-bind="text: timestamp"></td>
             </tr>
             </tbody>
@@ -61,7 +69,9 @@
             </thead>
             <tbody class="listing" data-bind="foreach: {data: deadlocks}">
             <tr>
-                <td class="message" data-bind="text:message"></td>
+                <td class="message">
+                    <a href="#" data-bind="text: message, attr: { href: eventLink, 'data-hover-text': hover }"></a>
+                </td>
                 <td class="timestamp" data-bind="text: timestamp"></td>
             </tr>
             </tbody>

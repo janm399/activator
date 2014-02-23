@@ -14,7 +14,7 @@ object Dependencies {
 
   val playVersion = "2.2.1"
   val webJarsVersion = "2.2.1"
-  val akkaVersion = "2.1.2"
+  val akkaVersion = "2.2.3"
   val slickVersion = "2.0.0"
   val echoPluginVersion = "0.1.0"
   val activatorAnalyticsVersion = "0.1.2"
@@ -50,7 +50,7 @@ object Dependencies {
   val mimeUtil             = "eu.medsea.mimeutil" % "mime-util" % "2.1.1" exclude("org.slf4j", "slf4j-log4j12") exclude("org.slf4j", "slf4j-api") exclude("log4j", "log4j")
 
   val junitInterface       = "com.novocode" % "junit-interface" % "0.7"
-  //val specs2               = "org.specs2" % "specs2_2.10" % "1.13"
+  val specs2               = "org.specs2" % "specs2_2.10" % "2.3.8"
 
   // SBT 0.13 required plugins
   val playSbt13Plugin        =  Defaults.sbtPluginExtra("com.typesafe.play" % "sbt-plugin" % playVersion, "0.13", "2.10")

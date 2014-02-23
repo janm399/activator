@@ -76,7 +76,7 @@ object ClientModuleHandler {
 
   implicit def toDeviationModuleInfo(in: RawModuleInformation): Try[DeviationModuleInfo] =
     Try {
-      DeviationModuleInfo(in.eventId.get, new UUID(in.traceId.get))
+      DeviationModuleInfo(in.eventId.get)
     }
 
   implicit def toDeviationsModuleInfo(in: RawModuleInformation): Try[DeviationsModuleInfo] =

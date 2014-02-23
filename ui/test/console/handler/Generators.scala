@@ -1,7 +1,16 @@
 package console.handler
 
 import akka.actor.ActorPath
-import activator.analytics.data.{ ActorStats, TimeRange, Scope }
+import activator.analytics.data.{
+  ActorStats,
+  TimeRange,
+  Scope,
+  ErrorStats,
+  ErrorStatsMetrics,
+  DeviationDetails,
+  DeviationDetail,
+  Counts
+}
 import activator.analytics.data.TimeRangeType._
 import com.typesafe.trace.uuid.UUID
 import scala.util.Random
@@ -174,4 +183,55 @@ object Generators {
     }
     test
   }
+
+  def genTimestampGen(start: Long = 0L, maxDelta: Int = 100): () => Long = {
+    var current = start
+
+    { () =>
+      current = current + Random.nextInt(maxDelta) + 1
+      current
+    }
+  }
+
+  def genCounts(errorsGen: () => Int = Random.nextInt(5),
+    warningsGen: () => Int = Random.nextInt(5),
+    deadLettersGen: () => Int = Random.nextInt(5),
+    unhandledMessagesGen: () => Int = Random.nextInt(5),
+    deadlocksGen: () => Int = Random.nextInt(5)): () => Counts =
+    () => Counts(errors = errorsGen(),
+      warnings = warningsGen(),
+      deadLetters = deadLettersGen(),
+      unhandledMessages = unhandledMessagesGen(),
+      deadlocks = deadlocksGen())
+
+  def genDeviationDetail(eventIdGen: () => UUID = genUUID(),
+    traceIdGen: () => UUID = genUUID(),
+    messageGen: () => String = genString(50),
+    timestampGen: () => Long = genTimestampGen()): () => DeviationDetail =
+    () => DeviationDetail(eventId = eventIdGen(),
+      traceId = traceIdGen(),
+      message = messageGen(),
+      timestamp = timestampGen())
+
+  def genDeviationDetails(errorsGen: () => Seq[DeviationDetail] = genMaxMultiple(5, genDeviationDetail()),
+    warningsGen: () => Seq[DeviationDetail] = genMaxMultiple(5, genDeviationDetail()),
+    deadLettersGen: () => Seq[DeviationDetail] = genMaxMultiple(5, genDeviationDetail()),
+    unhandledMessagesGen: () => Seq[DeviationDetail] = genMaxMultiple(5, genDeviationDetail()),
+    deadlockedThreadsGen: () => Seq[DeviationDetail] = genMaxMultiple(5, genDeviationDetail())): () => DeviationDetails =
+    () => DeviationDetails(errors = errorsGen().sortBy(_.timestamp).reverse.toList,
+      warnings = warningsGen().sortBy(_.timestamp).reverse.toList,
+      deadLetters = deadLettersGen().sortBy(_.timestamp).reverse.toList,
+      unhandledMessages = unhandledMessagesGen().sortBy(_.timestamp).reverse.toList,
+      deadlockedThreads = deadlockedThreadsGen().sortBy(_.timestamp).reverse.toList)
+
+  def genErrorStatsMetrics(countsGen: () => Counts = genCounts(),
+    deviationsGen: () => DeviationDetails = genDeviationDetails()): () => ErrorStatsMetrics =
+    () => ErrorStatsMetrics(counts = countsGen(), deviations = deviationsGen())
+
+  def genErrorStats(timeRangeGen: () => TimeRange,
+    nodeGen: () => Option[String] = genOption(genString()),
+    actorSystemGen: () => Option[String] = genOption(genString()),
+    errorMetricsGen: () => ErrorStatsMetrics = genErrorStatsMetrics(),
+    idGen: () => UUID = genUUID()): () => ErrorStats =
+    () => ErrorStats(timeRange = timeRangeGen(), node = nodeGen(), actorSystem = actorSystemGen(), metrics = errorMetricsGen(), id = idGen())
 }

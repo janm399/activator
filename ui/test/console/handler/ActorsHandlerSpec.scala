@@ -1,6 +1,5 @@
 package console.handler
 
-import activator.analytics.rest.http.LocalMemoryRepository
 import activator.analytics.data._
 import akka.actor.ActorRef
 import activator.analytics.data.TimeRangeType
@@ -9,17 +8,19 @@ import console.{ PagingInformation, ScopeModifiers }
 import java.util.concurrent.TimeUnit
 import activator.analytics.repository.ActorStatsSorted
 import activator.analytics.rest.http.SortingHelpers.{ Ascending, SortDirection }
+import console.AnalyticsRepository
 
 object ActorsHandlerSpec {
-  def actorsHandler(repo: LocalMemoryRepository)(body: (ActorRef, ActorStatsSorted) => Unit): ActorsHandlerBase = new ActorsHandlerBase {
+  def actorsHandler(repo: AnalyticsRepository)(body: (ActorRef, ActorStatsSorted) => Unit): ActorsHandlerBase = new ActorsHandlerBase {
     final val defaultLimit: Int = 100
-    val repository: LocalMemoryRepository = repo
+    val repository: AnalyticsRepository = repo
 
     def useActorStats(sender: ActorRef, stats: ActorStatsSorted): Unit = body(sender, stats)
   }
 }
 
-class ActorsHandlerSpec extends ActorHandlerSpecification {
+class ActorsHandlerSpec extends ActorsSpec("ActorsHandlerSpec") with ActorHandlerSpecification {
+  isolated
   import ActorHandlerSpec._
   import ActorsHandlerSpec._
 

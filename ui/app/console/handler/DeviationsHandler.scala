@@ -6,10 +6,16 @@ package handler
 
 import akka.actor.{ ActorRef, Props }
 import activator.analytics.data._
+import console.handler.rest.DeviationsJsonBuilder
+import console.AnalyticsRepository
 
 case class ChunkRange(min: Int, max: Int)
 
 object DeviationsHandler {
+  def props(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    builderProps: Props = DeviationsJsonBuilder.props()): Props =
+    Props(classOf[DeviationsHandler], builderProps, repository, defaultLimit)
 
   case class DeviationsModuleInfo(scope: Scope,
     time: TimeRange,
@@ -22,7 +28,7 @@ object DeviationsHandler {
 trait DeviationsHandlerBase extends RequestHandlerLike[DeviationsHandler.DeviationsModuleInfo] {
   import DeviationsHandler._
 
-  def useDeviationResult(sender: ActorRef, result: Either[Seq[ErrorStats], Seq[ActorStats]]): Unit
+  def useDeviationsResult(sender: ActorRef, result: Either[Seq[ErrorStats], Seq[ActorStats]]): Unit
 
   private def filterByTime(from: Option[Long], stats: ErrorStats): ErrorStats = {
     val filtered = for {
@@ -53,24 +59,26 @@ trait DeviationsHandlerBase extends RequestHandlerLike[DeviationsHandler.Deviati
         case None => Seq(ActorStats.concatenate(stats, mi.time, mi.scope))
         case Some(ChunkRange(min, max)) => ActorStats.chunk(min, max, stats, mi.time, mi.scope)
       }
-      useDeviationResult(sender, Right(result))
+      useDeviationsResult(sender, Right(result))
     } else {
       val stats = repository.errorStatsRepository.findWithinTimePeriod(mi.time, mi.scope.node, mi.scope.actorSystem)
       val result: Seq[ErrorStats] = mi.chunkRange match {
         case None ⇒ Seq(filterByTime(mi.dataFrom, ErrorStats.concatenate(stats, mi.time, mi.scope.node, mi.scope.actorSystem)))
         case Some(ChunkRange(min, max)) ⇒ ErrorStats.chunk(min, max, stats, mi.time, mi.scope.node, mi.scope.actorSystem) map { filterByTime(mi.dataFrom, _) }
       }
-      useDeviationResult(sender, Left(result))
+      useDeviationsResult(sender, Left(result))
     }
   }
 }
 
-class DeviationsHandler(builderProps: Props, val defaultLimit: Int) extends RequestHandler[DeviationsHandler.DeviationsModuleInfo] with DeviationsHandlerBase {
+class DeviationsHandler(builderProps: Props,
+  val repository: AnalyticsRepository,
+  val defaultLimit: Int) extends RequestHandler[DeviationsHandler.DeviationsModuleInfo] with DeviationsHandlerBase {
   import console.handler.rest.DeviationsJsonBuilder._
 
   val builder = context.actorOf(builderProps, "deviationsBuilder")
 
-  def useDeviationResult(sender: ActorRef, result: Either[Seq[ErrorStats], Seq[ActorStats]]): Unit = {
+  def useDeviationsResult(sender: ActorRef, result: Either[Seq[ErrorStats], Seq[ActorStats]]): Unit = {
     builder ! DeviationsResult(sender, result)
   }
 }

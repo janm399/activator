@@ -7,8 +7,14 @@ package handler
 import akka.actor.{ ActorRef, Props }
 import activator.analytics.data.{ TimeRange, Scope, ActorStats }
 import console.handler.rest.ActorJsonBuilder.ActorResult
+import console.handler.rest.ActorJsonBuilder
+import console.AnalyticsRepository
 
 object ActorHandler {
+  def props(repository: AnalyticsRepository,
+    builderProps: Props = ActorJsonBuilder.props()) =
+    Props(classOf[ActorHandler], repository, builderProps)
+
   case class ActorModuleInfo(scope: Scope,
     modifiers: ScopeModifiers,
     time: TimeRange,
@@ -25,7 +31,8 @@ trait ActorHandlerBase extends RequestHandlerLike[ActorHandler.ActorModuleInfo] 
   }
 }
 
-class ActorHandler(builderProps: Props) extends RequestHandler[ActorHandler.ActorModuleInfo] with ActorHandlerBase {
+class ActorHandler(val repository: AnalyticsRepository,
+  builderProps: Props) extends RequestHandler[ActorHandler.ActorModuleInfo] with ActorHandlerBase {
   val builder = context.actorOf(builderProps, "actorBuilder")
 
   def useActorStats(sender: ActorRef, stats: ActorStats): Unit = {

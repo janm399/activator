@@ -54,7 +54,7 @@ define(['text!./actors.html', 'main/pluginapi', '../widget', '../format', '../ho
           var throughput = format.units('messages/second', messageRate, formatUnits);
           var maxTimeInMailbox = format.units(a.maxTimeInMailbox.unit, a.maxTimeInMailbox.value, formatUnits);
           var maxMailboxSize = a.maxMailboxSize;
-          var deviationCount = a.errorCount + a.warningCount + a.deadLetterCount + a.unhandledMessageCount;
+          var deviationCount = a.errorCount + a.warningCount + a.deadletterCount + a.unhandledMessageCount;
           var deviations = deviationCount > 0 ? deviationCount : "";
           var actor = {
             'path': path,

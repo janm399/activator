@@ -33,7 +33,6 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
   def lifecycleHandlerProps: Props
   def monitorHandlerProps: Props
 
-  var handlers = Seq.empty[RawInformationBase]
   val (enum, channel) = Concurrent.broadcast[JsValue]
 
   val jsonHandler = context.actorOf(jsonHandlerProps, "jsonHandler")
@@ -56,7 +55,7 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
   def onDeviationRequest(in: DeviationHandler.DeviationModuleInfo): Unit = deviationHandler ! in
   def onLifecycleRequest(in: LifecycleHandler.LifecycleModuleInfo): Unit = lifecycleHandler ! in
 
-  def receive = {
+  def withHandlers(handlers: Seq[RawInformationBase]): Receive = {
     case Tick => handlers filter { m => !ClientModuleHandler.oneTimeHandlers.contains(m.handler) } foreach callHandler
     case Update(js) => channel.push(js)
     case r: HandleRequest => jsonHandler ! r
@@ -66,9 +65,46 @@ trait ClientHandlerBase extends Actor with ActorLogging with ClientModuleHandler
       // Only module handlers should be registered -
       // commands should not because they will only be invoked once and should not affect the module handlers.
       val moduleHandlers = newHandlers.filterNot { _.isInstanceOf[RawCommandInformation] }
-      if (moduleHandlers.nonEmpty) handlers = moduleHandlers
+      if (moduleHandlers.nonEmpty)
+        context.become(withHandlers(moduleHandlers))
       for { mi <- newHandlers } self ! mi
   }
+
+  def receive: Receive = withHandlers(Seq.empty[RawInformationBase])
+}
+
+object ClientHandler {
+  def derivedProps(repository: AnalyticsRepository,
+    defaultLimit: Int): Props =
+    props(jsonHandlerProps = JsonHandler.props(),
+      overviewHandlerProps = OverviewHandler.props(repository, defaultLimit),
+      actorsHandlerProps = ActorsHandler.props(repository, defaultLimit),
+      actorHandlerProps = ActorHandler.props(repository),
+      playRequestsHandlerProps = PlayRequestsHandler.props(repository, defaultLimit),
+      playRequestHandlerProps = PlayRequestHandler.props(repository),
+      deviationsHandlerProps = DeviationsHandler.props(repository, defaultLimit),
+      deviationHandlerProps = DeviationHandler.props(repository),
+      lifecycleHandlerProps = LifecycleHandler.props(repository))
+
+  def props(jsonHandlerProps: Props,
+    overviewHandlerProps: Props,
+    actorsHandlerProps: Props,
+    actorHandlerProps: Props,
+    playRequestsHandlerProps: Props,
+    playRequestHandlerProps: Props,
+    deviationsHandlerProps: Props,
+    deviationHandlerProps: Props,
+    lifecycleHandlerProps: Props): Props =
+    Props(classOf[ClientHandler],
+      jsonHandlerProps,
+      overviewHandlerProps,
+      actorsHandlerProps,
+      actorHandlerProps,
+      playRequestsHandlerProps,
+      playRequestHandlerProps,
+      deviationsHandlerProps,
+      deviationHandlerProps,
+      lifecycleHandlerProps)
 }
 
 class ClientHandler(val jsonHandlerProps: Props,
@@ -122,7 +158,7 @@ trait RequestHelpers { this: ActorLogging =>
             sortCommand = i.sortCommand,
             sortDirection = i.sortDirection,
             traceId = i.traceId,
-            eventId = for { t <- i.traceId } yield new UUID(t))
+            eventId = i.eventId)
           case None => sys.error(s"Could not find requested module: ${i.name}")
         }
       }
@@ -156,6 +192,9 @@ object JsonHandler {
   import play.api.libs.json._
   import play.api.libs.functional.syntax._
   import SortDirections._
+
+  def props(): Props =
+    Props(classOf[JsonHandler])
 
   implicit val uuidReads: Reads[UUID] = Reads {
     case JsString(s) => JsSuccess(new UUID(s))

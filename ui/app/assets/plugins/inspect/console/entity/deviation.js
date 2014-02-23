@@ -10,10 +10,10 @@ define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format',
             templates.registerTemplate("trace-tree-template", traceTreeTemplate);
 
             var self = this;
-            this.traceId = "unknown";
+            this.eventId = "unknown";
             this.parameters = function(params) {
                 this.deviationType(params[0]);
-                this.traceId = params[1];
+                this.eventId = params[1];
             };
             this.deviationType = ko.observable();
             this.deviationTime = ko.observable();
@@ -50,14 +50,16 @@ define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format',
         dataTypes: ['deviation'],
         dataScope: {},
         dataRequest: function() {
-            return { 'traceId': this.traceId };
+            return { 'eventId': this.eventId };
         },
         onData: function(data) {
             this.extractReason = function(json) {
                 var event = json.event;
                 if (event.annotation.reason != undefined) {
                     this.deviationTime(formatter.formatTime(new Date(event.timestamp)));
-                    this.deviationActorPath(event.annotation.actorInfo.actorPath);
+                    if (event.annotation.actorInfo != undefined) {
+                        this.deviationActorPath(event.annotation.actorInfo.actorPath);
+                    }
                     this.deviationReason(event.annotation.reason);
                 } else {
                    if (json.children != undefined && json.children.length > 0) {
@@ -68,8 +70,8 @@ define(['text!./deviation.html', 'main/pluginapi', './../widget', './../format',
                 }
             }
 
-            this.extractReason(data.deviation);
-            this.traceTree(data.deviation.traceTree);
+            this.extractReason(data.traceTree);
+            this.traceTree(data.traceTree);
         }
     });
 });

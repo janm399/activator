@@ -4,9 +4,12 @@
 package console
 package handler
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, Props }
 
 object LifecycleHandler {
+  def props(repository: AnalyticsRepository): Props =
+    Props(classOf[LifecycleHandler], repository)
+
   case class LifecycleModuleInfo(command: Command) extends ModuleInformationBase
 
   sealed trait Command
@@ -28,5 +31,4 @@ trait LifecycleHandlerBase extends RequestHandler[LifecycleHandler.LifecycleModu
   }
 }
 
-class LifecycleHandler extends LifecycleHandlerBase {
-}
+class LifecycleHandler(val repository: AnalyticsRepository) extends LifecycleHandlerBase

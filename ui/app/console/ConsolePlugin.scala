@@ -9,6 +9,7 @@ import akka.actor.{ PoisonPill, ActorRef, Props, ActorSystem }
 import scala.util.control.NonFatal
 import activator.analytics.analyzer.AnalyzerManager
 import com.typesafe.trace.ReceiveMain
+import scala.concurrent.duration._
 
 class ConsolePlugin(app: Application) extends Plugin {
   private var env: ConsolePluginEnvironment = null
@@ -53,7 +54,9 @@ private case class ConsolePluginEnvironment(config: Config, system: ActorSystem,
 private object ConsolePluginEnvironment {
   def apply(config: Config): ConsolePluginEnvironment = {
     val system = ActorSystem("ConsoleActorSystem")
-    val clientHandler = system.actorOf(Props[ClientController], "clientController")
+    val clientHandler = system.actorOf(ClientController.derivedProps(AnalyticsRepository.fromSingletonMemoryObjects,
+      config.getInt("activator.default-page-limit"),
+      Some(config.getLong("console.update-frequency").milliseconds)), "clientController")
     config.checkValid(ConfigFactory.defaultReference, "activator")
     ConsolePluginEnvironment(config, system, clientHandler)
   }

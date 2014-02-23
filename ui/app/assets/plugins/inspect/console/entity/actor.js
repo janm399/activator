@@ -26,7 +26,7 @@ define(['text!./actor.html', 'main/pluginapi', './../widget', '../format'], func
     onData: function(data) {
       this.deviationCount(data.actor.errorCount +
         data.actor.warningCount +
-        data.actor.deadLetterCount +
+        data.actor.deadletterCount +
         data.actor.unhandledMessageCount);
       this.actor(data.actor);
     },

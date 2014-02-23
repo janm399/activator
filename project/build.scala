@@ -11,7 +11,7 @@ import com.typesafe.sbt.SbtPgp.PgpKeys
 
 
 object TheActivatorBuild extends Build {
-  
+
   def fixFileForURIish(f: File): String = {
     val uriString = f.toURI.toASCIIString
     if(uriString startsWith "file://") uriString.drop("file://".length)
@@ -111,6 +111,7 @@ object TheActivatorBuild extends Build {
     dependsOn(props, uiCommon)
     settings(play.Project.playDefaultPort := 8888)
     settings(Keys.initialize ~= { _ => sys.props("scalac.patmat.analysisBudget") = "512" })
+    settings(Keys.libraryDependencies ++= Seq("com.typesafe.akka" % "akka-testkit_2.10" % "2.2.0" % "test", Dependencies.specs2 % "test"))
     // set up debug props for forked tests
     settings(configureSbtTest(Keys.test): _*)
     settings(configureSbtTest(Keys.testOnly): _*)
@@ -185,6 +186,8 @@ object TheActivatorBuild extends Build {
     settings(offline.settings:_*)
   )
 
+  lazy val logDownloadUrls = taskKey[Unit]("log download urls because we are lazy and don't want to hand-construct them")
+
   lazy val dist = (
     ActivatorProject("dist")
     // TODO - Should publish be pushing the S3 upload?
@@ -224,15 +227,15 @@ object TheActivatorBuild extends Build {
         // note: do not use %% here
         "org.scalatest" % "scalatest_2.10" % "1.9.1",
         "com.typesafe.akka" % "akka-actor_2.10" % "2.2.1",
-        "com.typesafe.akka" % "akka-actor_2.10" % "2.2.3",
         "com.typesafe.akka" % "akka-testkit_2.10" % "2.2.1",
         "com.typesafe.akka" % "akka-slf4j_2.10" % "2.2.1",
-        "com.typesafe.akka" % "akka-contrib_2.10" % "2.2.3",
+	"com.typesafe.akka" % "akka-contrib_2.10" % "2.2.1",
         "org.scalatest" % "scalatest_2.10" % "2.0",
         "junit" % "junit" % "4.11",
         "org.fusesource.jansi" % "jansi" % "1.11",
         "com.novocode" % "junit-interface" % "0.7",
         "org.webjars" % "webjars-play_2.10" % Dependencies.webJarsVersion,
+        "org.webjars" % "webjars-play_2.10" % "2.2.0",
         "org.webjars" % "bootstrap" % "2.3.1",
         "org.webjars" % "flot" % "0.8.0",
         "com.typesafe.play" % "play-java_2.10" % Dependencies.playVersion,
@@ -258,7 +261,13 @@ object TheActivatorBuild extends Build {
             zip -> ("typesafe-activator/%s/typesafe-activator-%s.zip" format (v, v)))
       },
       S3.host in S3.upload := "downloads.typesafe.com.s3.amazonaws.com",
-      S3.progress in S3.upload := true
+      S3.progress in S3.upload := true,
+      logDownloadUrls := {
+        val log = Keys.streams.value.log
+        val version = Keys.version.value
+        log.info(s"Download: http://downloads.typesafe.com/typesafe-activator/${version}/typesafe-activator-${version}.zip")
+        log.info(s"Minimal:  http://downloads.typesafe.com/typesafe-activator/${version}/typesafe-activator-${version}-minimal.zip")
+      }
     )
   )
 }

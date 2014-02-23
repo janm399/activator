@@ -15,33 +15,22 @@ import play.api.Play.current
 import console.handler._
 import console.handler.rest._
 
-class ClientController extends Actor with ActorLogging {
+class ClientController(clientHandlerProps: Props,
+  updateInterval: Option[FiniteDuration]) extends Actor with ActorLogging {
   import ClientController._
   import ExecutionContext.Implicits.global
 
-  context.system.scheduler.schedule(
-    ConsoleController.config.getLong("console.update-frequency").milliseconds,
-    ConsoleController.config.getLong("console.update-frequency").milliseconds,
-    self,
-    Tick)
-
-  val defaultLimit = ConsoleController.defaultPageLimit
+  val tickScheduler: Option[Cancellable] =
+    updateInterval.map(ui => context.system.scheduler.schedule(ui, ui, self, Tick))
 
   def receive = {
     case CreateClient(id) =>
       if (context.child(id).isEmpty)
-        context.actorOf(Props(new ClientHandler(
-          jsonHandlerProps = Props[JsonHandler],
-          overviewHandlerProps = Props(new OverviewHandler(Props[OverviewJsonBuilder], defaultLimit)),
-          actorsHandlerProps = Props(new ActorsHandler(Props[ActorsJsonBuilder], defaultLimit)),
-          actorHandlerProps = Props(new ActorHandler(Props[ActorJsonBuilder])),
-          playRequestsHandlerProps = Props(new PlayRequestsHandler(Props[PlayRequestsJsonBuilder], defaultLimit)),
-          playRequestHandlerProps = Props(new PlayRequestHandler(Props[PlayRequestJsonBuilder])),
-          deviationsHandlerProps = Props(new DeviationsHandler(Props[DeviationsJsonBuilder], defaultLimit)),
-          deviationHandlerProps = Props(new DeviationHandler(Props[DeviationJsonBuilder])),
-          lifecycleHandlerProps = Props[LifecycleHandler],
-          monitorHandlerProps = Props(new MonitorHandler(Props[MonitorJsonBuilder], defaultLimit)))), id) forward InitializeCommunication
+        context.actorOf(clientHandlerProps, id) forward InitializeCommunication
     case Tick => context.children foreach { _ ! Tick }
+    case Shutdown =>
+      context.children foreach { _ ! Shutdown }
+      tickScheduler.map(_.cancel())
   }
 }
 
@@ -52,6 +41,16 @@ object ClientController {
   case class Update(js: JsValue)
   case object InitializeCommunication
   case object Tick
+  case object Shutdown
+
+  def derivedProps(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    updateInterval: Option[FiniteDuration]): Props =
+    props(ClientHandler.derivedProps(repository, defaultLimit), updateInterval)
+
+  def props(clientHandlerProps: Props,
+    updateInterval: Option[FiniteDuration] = Some(ConsoleController.config.getLong("console.update-frequency").milliseconds)): Props =
+    Props(classOf[ClientController], clientHandlerProps, updateInterval)
 
   def join(id: String): Future[(Iteratee[JsValue, _], Enumerator[JsValue])] = {
     import play.api.libs.concurrent.Execution.Implicits._

@@ -3,7 +3,7 @@
  */
 package console.handler.rest
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, Props }
 import activator.analytics.data.PlayRequestSummary
 import play.api.libs.json._
 import play.api.libs.json.JsArray
@@ -20,6 +20,9 @@ class PlayRequestJsonBuilder extends JsonBuilderActor {
 }
 
 object PlayRequestJsonBuilder {
+  def props(): Props =
+    Props(classOf[PlayRequestJsonBuilder])
+
   case class PlayRequestResult(receiver: ActorRef, stats: PlayRequestSummary, actorInfo: Set[ActorInfo])
 
   def createJson(result: PlayRequestResult): JsObject = {

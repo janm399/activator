@@ -9,8 +9,15 @@ import activator.analytics.data.{ PlayStatsSort, PlayStatsSorts, PlayRequestSumm
 import activator.analytics.rest.http.SortingHelpers.SortDirection
 import console.handler.rest.PlayRequestsJsonBuilder.PlayRequestsResult
 import scala.language.existentials
+import console.handler.rest.PlayRequestsJsonBuilder
+import console.AnalyticsRepository
 
 object PlayRequestsHandler {
+  def props(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    builderProps: Props = PlayRequestsJsonBuilder.props()): Props =
+    Props(classOf[PlayRequestsHandler], repository, builderProps, defaultLimit)
+
   case class PlayRequestsModuleInfo(scope: Scope,
     modifiers: ScopeModifiers,
     time: TimeRange,
@@ -50,7 +57,9 @@ trait PlayRequestsHandlerBase extends RequestHandler[PlayRequestsHandler.PlayReq
   }
 }
 
-class PlayRequestsHandler(builderProps: Props, val defaultLimit: Int) extends PlayRequestsHandlerBase {
+class PlayRequestsHandler(val repository: AnalyticsRepository,
+  builderProps: Props,
+  val defaultLimit: Int) extends PlayRequestsHandlerBase {
   val builder = context.actorOf(builderProps, "playRequestsBuilder")
 
   def usePlayRequestStats(sender: ActorRef, stats: Seq[PlayRequestSummary]): Unit = {

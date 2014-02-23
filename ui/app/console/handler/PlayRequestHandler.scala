@@ -11,8 +11,14 @@ import console.handler.rest.PlayRequestJsonBuilder.PlayRequestResult
 import com.typesafe.trace.{ ActorAnnotation, ActorInfo }
 import scala.concurrent.{ ExecutionContext, Future }
 import ExecutionContext.Implicits.global
+import console.handler.rest.PlayRequestJsonBuilder
+import console.AnalyticsRepository
 
 object PlayRequestHandler {
+  def props(repository: AnalyticsRepository,
+    builderProps: Props = PlayRequestJsonBuilder.props()): Props =
+    Props(classOf[PlayRequestHandler], repository, builderProps)
+
   case class PlayRequestModuleInfo(
     scope: Scope,
     modifiers: ScopeModifiers,
@@ -48,7 +54,8 @@ trait PlayRequestHandlerBase extends RequestHandler[PlayRequestHandler.PlayReque
   }
 }
 
-class PlayRequestHandler(builderProps: Props) extends PlayRequestHandlerBase {
+class PlayRequestHandler(val repository: AnalyticsRepository,
+  builderProps: Props) extends PlayRequestHandlerBase {
   val builder = context.actorOf(builderProps, "playRequestBuilder")
 
   def usePlayRequestStats(sender: ActorRef, traceId: String, stats: Option[PlayRequestSummary], actorInfo: Set[ActorInfo]): Unit = stats match {

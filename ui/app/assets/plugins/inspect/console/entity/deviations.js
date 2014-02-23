@@ -57,8 +57,9 @@ define(['text!./deviations.html', 'main/pluginapi', './../widget', '../format'],
                         var element = {
                             'event' : collection[i].event,
                             'message' : collection[i].message,
+                            'hover' : collection[i].message,
                             'timestamp' : this.formatTimestamp(collection[i].timestamp),
-                            'traceLink' : "#inspect/deviation/" + deviationType + "/" + collection[i].trace.substring(collection[i].trace.lastIndexOf('/') + 1)
+                            'eventLink' : "#inspect/deviation/" + deviationType + "/" + collection[i].event.substring(collection[i].event.lastIndexOf('/') + 1)
                         };
                         newCollection.push(element);
                     }
@@ -74,7 +75,7 @@ define(['text!./deviations.html', 'main/pluginapi', './../widget', '../format'],
             this.deadlocks(this.format(data.deviations[0].deadlocks, "Deadlock"));
             this.errorCount(data.deviations[0].errorCount);
             this.warningCount(data.deviations[0].warningCount);
-            this.deadLetterCount(data.deviations[0].deadLetterCount);
+            this.deadLetterCount(data.deviations[0].deadletterCount);
             this.unhandledMessageCount(data.deviations[0].unhandledMessageCount);
             this.deadlockCount(data.deviations[0].deadlockCount);
             this.deviationCount(deviations);

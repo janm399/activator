@@ -1,7 +1,6 @@
 package console.handler
 
 import org.specs2.mutable._
-import activator.analytics.rest.http.LocalMemoryRepository
 import activator.analytics.data._
 import akka.actor.{ ActorRef, ActorPath }
 import com.typesafe.trace.uuid.UUID
@@ -12,6 +11,7 @@ import scala.Some
 import activator.analytics.data.ActorStatsMetrics
 import console.ScopeModifiers
 import java.util.concurrent.TimeUnit
+import console.AnalyticsRepository
 
 object ActorHandlerSpec {
   import Generators._
@@ -30,25 +30,26 @@ object ActorHandlerSpec {
     ActorStats(tr, s, ActorStatsMetrics(bytesRead = i, bytesWritten = i))
   }
 
-  lazy val repository: LocalMemoryRepository = {
-    val r = new LocalMemoryRepository(null)
+  lazy val repository: AnalyticsRepository = {
+    val r = AnalyticsRepository.freshMemoryObjects
     val asr = r.actorStatsRepository
     asr.save(stats)
     r
   }
 
-  def actorHandler(repo: LocalMemoryRepository)(body: (ActorRef, ActorStats) => Unit): ActorHandlerBase = new ActorHandlerBase {
-    val repository: LocalMemoryRepository = repo
+  def actorHandler(repo: AnalyticsRepository)(body: (ActorRef, ActorStats) => Unit): ActorHandlerBase = new ActorHandlerBase {
+    val repository: AnalyticsRepository = repo
 
     def useActorStats(sender: ActorRef, stats: ActorStats): Unit = body(sender, stats)
   }
 }
 
-trait ActorHandlerSpecification extends Specification {
+trait ActorHandlerSpecification { this: SpecificationLike =>
   def beEqualActorStats = (be_==(_: ActorStats)) ^^^ ((_: ActorStats).copy(timeRange = TimeRange(), id = UUID.nilUUID()))
 }
 
-class ActorHandlerSpec extends ActorHandlerSpecification {
+class ActorHandlerSpec extends ActorsSpec("ActorHandlerSpec") with ActorHandlerSpecification {
+  isolated
   import ActorHandlerSpec._
 
   "Actor Handler" should {

@@ -13,8 +13,15 @@ import console.handler.rest.OverviewJsonBuilder.OverviewResult
 import activator.analytics.data.MetadataStats
 import console.ScopeModifiers
 import activator.analytics.rest.http.SortingHelpers.SortDirection
+import console.handler.rest.OverviewJsonBuilder
+import console.AnalyticsRepository
 
 object OverviewHandler {
+  def props(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    builderProps: Props = OverviewJsonBuilder.props()): Props =
+    Props(classOf[OverviewHandler], repository, builderProps, defaultLimit)
+
   case class OverviewModuleInfo(scope: Scope,
     modifiers: ScopeModifiers,
     time: TimeRange,
@@ -61,7 +68,9 @@ trait OverviewHandlerBase extends PagingRequestHandler[OverviewSort, OverviewHan
   }
 }
 
-class OverviewHandler(builderProps: Props, val defaultLimit: Int) extends OverviewHandlerBase {
+class OverviewHandler(val repository: AnalyticsRepository,
+  builderProps: Props,
+  val defaultLimit: Int) extends OverviewHandlerBase {
   val builder = context.actorOf(builderProps, "overviewBuilder")
   def useMetadataStats(sender: ActorRef, stats: MetadataStats, errorStats: ErrorStats): Unit = {
     builder ! OverviewResult(receiver = sender,

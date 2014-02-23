@@ -1,6 +1,6 @@
 package console.handler.rest
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, Props }
 import activator.analytics.data._
 import play.api.libs.json._
 import console.ClientController.Update
@@ -16,6 +16,9 @@ class OverviewJsonBuilder extends JsonBuilderActor {
 }
 
 object OverviewJsonBuilder {
+  def props(): Props =
+    Props(classOf[OverviewJsonBuilder])
+
   case class OverviewResult(receiver: ActorRef, metadata: MetadataStats, deviations: ErrorStats)
 
   def createJson(metadata: MetadataStats, deviations: ErrorStats): JsObject = {

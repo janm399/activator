@@ -2,6 +2,7 @@ package console.handler
 
 import akka.actor.{ ActorRef, Props }
 import console._
+import console.handler.rest.MonitorJsonBuilder.MonitorResult
 
 sealed trait MonitorSort
 object MonitorSorts {
@@ -22,7 +23,6 @@ class MonitorHandler(builderProps: Props, val defaultLimit: Int) extends Monitor
   val builder = context.actorOf(builderProps, "monitorBuilder")
 
   override def onModuleInformation(sender: ActorRef, mi: MonitorModuleInfo): Unit = {
-    println("**********" + mi)
-    ()
+    builder ! MonitorResult(sender, List.fill(10) { MonitorData("foo", (math.random * 100).toInt) })
   }
 }

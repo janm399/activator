@@ -3,7 +3,6 @@
  */
 define(['main/pluginapi'], function(api) {
 
-  var ko = api.ko;
 
   var offset = { 'left': 2, 'top': 2, 'right': 10, 'bottom': 15 };
 

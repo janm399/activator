@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['webjars!knockout', './utils', './templates'], function(ko, utils, templates) {
+define(['./utils', './templates'], function(utils, templates) {
 
 // base class for widgets, with convenience.
 //All widget classes should support the following static fields:

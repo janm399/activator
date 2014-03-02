@@ -1,9 +1,9 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['webjars!knockout', './router', 'commons/settings', 'plugins/tutorial/tutorial', 'services/build', './keyboard', './omnisearch',
+define(['./router', 'commons/settings', 'plugins/tutorial/tutorial', 'services/build', './keyboard', './omnisearch',
         './navigation', './panel', 'widgets/notifications/notifications'],
-    function(ko, router, settings, Tutorial, build, keyboard, omnisearch,
+    function(router, settings, Tutorial, build, keyboard, omnisearch,
         navigation, panel, Notifications) {
 
   // This is the model for HTML which is directly in main.scala.html.

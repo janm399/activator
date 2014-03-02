@@ -3,7 +3,6 @@
  */
 define(['text!./welcome.html', 'css!./welcome.css', 'main/pluginapi' ], function(template, css, api){
 
-  var ko = api.ko;
 
   var welcomePage = api.PluginWidget({
     id: 'welcome-page-screen',

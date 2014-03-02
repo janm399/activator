@@ -4,7 +4,6 @@
 define(['services/build', 'main/model', 'text!./run.html', 'main/pluginapi', 'commons/settings', 'widgets/log/log', 'css!./run.css'],
     function(build, model, template, api, settings, log, css){
 
-  var ko = api.ko;
 
   var runConsole = api.PluginWidget({
     id: 'play-run-widget',

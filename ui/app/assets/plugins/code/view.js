@@ -3,8 +3,6 @@
  */
 define(["text!./viewWrapper.html", "text!./viewDefault.html", "./imageView", "./codeView", 'main/pluginapi'], function(viewOuter, defaultTemplate, ImageView, CodeView, api) {
 
-  var ko = api.ko;
-
   function open(location) {
     return $.ajax({
       url: '/api/local/open',

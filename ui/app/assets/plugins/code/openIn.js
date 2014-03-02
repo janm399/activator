@@ -4,7 +4,6 @@
 define(['text!./openInEclipse.html', 'text!./openInIdea.html', 'main/pluginapi', 'widgets/overlay/overlay', 'widgets/log/log'],
 function(eclipseTemplate, ideaTemplate, api, Overlay, log){
 
-  var ko = api.ko;
   var sbt = api.sbt;
 
   function browse(location) {

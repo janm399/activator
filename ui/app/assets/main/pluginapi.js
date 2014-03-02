@@ -2,7 +2,6 @@
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 define([
-  'webjars!knockout',
   'services/sbt',
   './keyboard',
   'commons/utils',
@@ -10,7 +9,7 @@ define([
   'commons/widget',
   'widgets/editor/acebinding',
   './model'],
-  function(ko, sbt, keyboard, utils, events, Widget, acebinding, model) {
+  function(sbt, keyboard, utils, events, Widget, acebinding, model) {
   var STATUS_DEFAULT = 'default';
   var STATUS_BUSY = 'busy';
   var STATUS_ERROR = 'error;'
@@ -155,7 +154,6 @@ define([
   }
 
   return {
-    ko: ko,
     sbt: sbt,
     utils: utils,
     Class: utils.Class, // TODO make people use api.utils.Class

@@ -66,10 +66,7 @@ class DeviationJsonSpec extends Specification {
       val result = InvalidResult(ActorRef.noSender, event)
       val r = DeviationJsonBuilder.createJson(result)
       (r \ "type").asOpt[String] must beSome("deviation")
-      (r \ "data").asOpt[JsValue] must beSome
-      val root = (r \ "data").as[JsValue]
-      (root \ "traceEvent").asOpt[JsValue] must beSome(Json.obj())
-      (root \ "traceTree").asOpt[JsValue] must beSome(Json.obj())
+      (r \ "data").asOpt[JsValue] must beSome(JsNull)
     }
   }
 }

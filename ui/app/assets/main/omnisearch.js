@@ -1,8 +1,7 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['commons/utils', 'webjars!knockout'],
-    function(utils, ko) {
+define(['commons/utils'], function(utils) {
   var omnisearch = utils.Singleton({
     init: function() {
       this.searchString = ko.observable("");

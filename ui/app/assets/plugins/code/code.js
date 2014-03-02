@@ -4,8 +4,6 @@
 define(['main/pluginapi', 'text!./home.html', './files', './browse', './view', './openIn', 'css!./code.css'],
     function(api, template, files, Browser, Viewer, openIn, css) {
 
-  var ko = api.ko;
-
   var home = api.PluginWidget({
     id: 'code-core',
     template: template,

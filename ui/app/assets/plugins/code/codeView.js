@@ -2,7 +2,7 @@
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 define(["text!./viewCode.html", 'main/pluginapi', 'commons/settings'], function(template, api, settings){
-  var ko = api.ko;
+
 
   // !settings.editor.theme && settings.register("editor.theme", false);
   // !settings.editor.fontSize && settings.register("editor.fontSize", false);

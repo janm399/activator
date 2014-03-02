@@ -9,7 +9,7 @@ define(["text!./viewImage.html", 'main/pluginapi'], function(template, api){
     init: function(args) {
       var self = this;
       self.file = args.file;
-      self.fileLoadUrl = api.ko.computed(function() {
+      self.fileLoadUrl = ko.computed(function() {
         var file = self.file();
         return '/api/local/show?location=' + file.location;
       });

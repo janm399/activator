@@ -1,5 +1,4 @@
 define(['text!./actor.html', 'main/pluginapi', './../widget', '../format'], function(template, api, ConsoleWidget, format) {
-  var ko = api.ko;
 
   return api.Class(ConsoleWidget, {
     id: 'console-actor-widget',

@@ -3,7 +3,6 @@
  */
 define(['text!./requests.html', 'main/pluginapi', './../widget', '../format'], function(template, api, ConsoleWidget, format) {
 
-  var ko = api.ko;
 
   var Requests = api.Class(ConsoleWidget, {
     id: 'console-requests-widget',

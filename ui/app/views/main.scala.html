@@ -15,7 +15,8 @@
     <title>Typesafe Activator</title>
     <link href="@routes.Assets.at("main/main.css")" rel="stylesheet" type="text/css">
     <script type="text/javascript">
-      window.debug = true;
+      // put ?debug in your query string to enable debug mode
+      window.debug = (location.search.indexOf("debug") >= 0);
       window.wsUrl = '@webSocketURLWithCSRF(routes.Application.connectApp(model.id))';
       window.consoleWsUrl = '@webSocketURLWithCSRF(routes.ConsoleController.connectConsole(model.id))';
       @* The @Html thing prevents the Json from being escaped *@

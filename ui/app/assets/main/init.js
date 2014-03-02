@@ -3,9 +3,7 @@
  */
 
 // Sort of MVC (Module, Grid, Router)
-define(['./model', './pluginapi', 'commons/streams', './plugin', './globalEventHandlers'], function(model, api, streams, plugins, globalEventHandlers) {
-
-  var ko = api.ko;
+define(['./model', 'commons/streams', './plugin', './globalEventHandlers'], function(model, streams, plugins, globalEventHandlers) {
 
   // Register webSocket error handler
   streams.subscribe({

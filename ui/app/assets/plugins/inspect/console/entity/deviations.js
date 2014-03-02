@@ -2,8 +2,7 @@
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 define(['text!./deviations.html', 'main/pluginapi', './../widget', '../format'], function(template, api, ConsoleWidget, formatter) {
-    var ko = api.ko;
-    return api.Class(ConsoleWidget, {
+      return api.Class(ConsoleWidget, {
         id: 'console-deviations-widget',
         template: template,
         init: function(args) {

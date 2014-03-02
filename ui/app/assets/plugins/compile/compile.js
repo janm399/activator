@@ -4,7 +4,6 @@
 define(['text!./compile.html', 'main/pluginapi', 'services/build', 'commons/settings', 'widgets/log/log', 'css!./compile.css'],
     function(template, api, build, settings, log) {
 
-  var ko = api.ko;
 
   var compileConsole = api.PluginWidget({
     id: 'compile-widget',

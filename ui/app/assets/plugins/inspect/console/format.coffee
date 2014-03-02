@@ -108,7 +108,7 @@ define ->
 
       result
 
-    formatTime: (date, seconds = true, milliseconds = true, UTC = true) ->
+    formatTime: (date, seconds = true, milliseconds = true, UTC = false) ->
       if not date? then return ""
       if not date.getUTCFullYear? then date = new Date(date)
       part = (x, numberOfDigits = 2) ->
@@ -145,7 +145,7 @@ define ->
       result += part(if UTC then date.getUTCDate() else date.getDate())
       result
 
-    formatTimestamp: (date, UTC = true) ->
+    formatTimestamp: (date, UTC = false) ->
       if not date? then return ""
       if not date.getUTCFullYear? then date = new Date(date)
       @formatDate(date, UTC) + " " + @formatTime(date, true, true, UTC)

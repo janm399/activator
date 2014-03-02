@@ -2,7 +2,7 @@
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 define(['text!./test.html', 'css!./test.css', 'main/pluginapi', 'services/build'], function(template, css, api, build) {
-  var ko = api.ko;
+
   var sbt = api.sbt;
 
   var testConsole = api.PluginWidget({

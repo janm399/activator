@@ -2,7 +2,7 @@
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
 // track annotations for files where both editors and logs can see them
-define(['webjars!knockout'], function(ko) {
+define(function() {
 
   // { filename : [ { owner: ownerId, line: line, kind: kind, message: message } ] }
   var fileMarkers = {};

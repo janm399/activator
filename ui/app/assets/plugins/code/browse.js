@@ -3,8 +3,6 @@
  */
 define(['text!./browse.html', 'main/pluginapi', './files'], function(template, api, files) {
 
-  var ko = api.ko;
-
   // TODO - Don't duplicate this in both view.js + browse.js...
   function open(location) {
     return $.ajax({

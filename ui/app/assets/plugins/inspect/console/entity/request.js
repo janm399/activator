@@ -1,5 +1,4 @@
 define(['text!./request.html', 'main/pluginapi', './../widget'], function(template, api, ConsoleWidget) {
-  var ko = api.ko;
 
   return api.Class(ConsoleWidget, {
     id: 'console-request-widget',

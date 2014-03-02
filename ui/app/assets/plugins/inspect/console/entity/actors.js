@@ -3,7 +3,6 @@
  */
 define(['text!./actors.html', 'main/pluginapi', '../widget', '../format', '../hover'], function(template, api, ConsoleWidget, format) {
 
-  var ko = api.ko;
 
   return api.Class(ConsoleWidget, {
     id: 'console-actors-widget',

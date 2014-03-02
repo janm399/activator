@@ -1,7 +1,7 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['webjars!knockout'], function(ko) {
+define(function() {
   // Decomposed url in an array
   var breadcrumbs = [];
 

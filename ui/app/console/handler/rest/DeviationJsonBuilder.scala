@@ -6,7 +6,7 @@ package console.handler.rest
 import akka.actor.{ ActorRef, Props }
 import console.ClientController.Update
 import com.typesafe.trace.TraceEvent
-import play.api.libs.json.{ Json, JsObject, JsValue, JsArray, Writes, JsString }
+import play.api.libs.json.{ Json, JsObject, JsValue, JsArray, Writes, JsString, JsNull }
 import com.typesafe.trace.uuid.UUID
 import play.api.libs.json.Json.JsValueWrapper
 import activator.analytics.data.{ TimeRange, Scope, ActorStats }
@@ -40,12 +40,9 @@ object DeviationJsonBuilder {
           case ValidResult(_, eventID, event, traces) => createValidResultJson(eventID, event, traces)
         }))
 
-  def createInvalidResultJson(eventId: UUID): JsObject =
-    Json.obj(
-      "traceEvent" -> Json.obj(),
-      "traceTree" -> Json.obj())
+  def createInvalidResultJson(eventId: UUID): JsValue = JsNull
 
-  def createValidResultJson(eventId: UUID, event: TraceEvent, traces: Seq[TraceEvent]): JsObject =
+  def createValidResultJson(eventId: UUID, event: TraceEvent, traces: Seq[TraceEvent]): JsValue =
     Json.obj(
       "traceEvent" -> createTraceEventJson(event),
       "traceTree" -> createTraceTreeJson(TraceTree(traces)))

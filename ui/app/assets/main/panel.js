@@ -1,8 +1,8 @@
 /*
  Copyright (C) 2013 Typesafe, Inc <http://typesafe.com>
  */
-define(['commons/utils', 'webjars!knockout', 'commons/settings'],
-    function(utils, ko, settings) {
+define(['commons/utils', 'commons/settings'],
+    function(utils, settings) {
   settings.register("app.panelOpened", true);
   settings.register("app.panelShape", "right1");
 

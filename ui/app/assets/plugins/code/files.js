@@ -3,7 +3,6 @@
  */
 define(['main/pluginapi'], function(api) {
 
-  var ko = api.ko;
 
   function browse(location) {
     return $.ajax({

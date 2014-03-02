@@ -1,4 +1,4 @@
-define(['webjars!knockout'], function(ko) {
+define(function() {
   var makeSetting = function(label, def) {
     var initial;
     if (window.localStorage.getItem(label) != null) {

@@ -85,7 +85,8 @@ object ClientHandler {
       playRequestHandlerProps = PlayRequestHandler.props(repository),
       deviationsHandlerProps = DeviationsHandler.props(repository, defaultLimit),
       deviationHandlerProps = DeviationHandler.props(repository),
-      lifecycleHandlerProps = LifecycleHandler.props(repository))
+      lifecycleHandlerProps = LifecycleHandler.props(repository),
+      monitorHandlerProps = MonitorHandler.props(repository, defaultLimit))
 
   def props(jsonHandlerProps: Props,
     overviewHandlerProps: Props,
@@ -95,7 +96,8 @@ object ClientHandler {
     playRequestHandlerProps: Props,
     deviationsHandlerProps: Props,
     deviationHandlerProps: Props,
-    lifecycleHandlerProps: Props): Props =
+    lifecycleHandlerProps: Props,
+    monitorHandlerProps: Props): Props =
     Props(classOf[ClientHandler],
       jsonHandlerProps,
       overviewHandlerProps,
@@ -105,7 +107,8 @@ object ClientHandler {
       playRequestHandlerProps,
       deviationsHandlerProps,
       deviationHandlerProps,
-      lifecycleHandlerProps)
+      lifecycleHandlerProps,
+      monitorHandlerProps)
 }
 
 class ClientHandler(val jsonHandlerProps: Props,

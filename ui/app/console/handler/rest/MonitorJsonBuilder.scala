@@ -1,6 +1,6 @@
 package console.handler.rest
 
-import akka.actor.ActorRef
+import akka.actor.{ Props, ActorRef }
 import play.api.libs.json._
 import console.ClientController.Update
 import play.api.libs.json.JsObject
@@ -16,6 +16,7 @@ class MonitorJsonBuilder extends JsonBuilderActor {
 
 object MonitorJsonBuilder {
   case class MonitorResult(receiver: ActorRef, data: List[MonitorData])
+  def props(): Props = Props[MonitorJsonBuilder]
 
   def createJson(data: MonitorData): JsObject = Json.obj("category" -> data.category, "value" -> data.value)
 

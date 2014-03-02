@@ -11,6 +11,12 @@ object MonitorSorts {
 
 object MonitorHandler {
   case class MonitorModuleInfo() extends ModuleInformationBase
+  import console.handler.rest.MonitorJsonBuilder
+
+  def props(repository: AnalyticsRepository,
+    defaultLimit: Int,
+    builderProps: Props = MonitorJsonBuilder.props()) =
+    Props(classOf[MonitorHandler], repository, builderProps, defaultLimit)
 
 }
 
@@ -18,7 +24,8 @@ trait MonitorHandlerBase extends RequestHandler[MonitorHandler.MonitorModuleInfo
 
 }
 
-class MonitorHandler(builderProps: Props, val defaultLimit: Int) extends MonitorHandlerBase {
+class MonitorHandler(val repository: AnalyticsRepository,
+  builderProps: Props, val defaultLimit: Int) extends MonitorHandlerBase {
   import MonitorHandler._
   val builder = context.actorOf(builderProps, "monitorBuilder")
 

@@ -3,9 +3,6 @@
  */
 define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3', './connection'], function (template, api, d3, Connection) {
 
-    var ko = api.ko;
-    var sbt = api.sbt;
-
     function dthree(data) {
         var width = 800;
         var height = 1000;
@@ -39,8 +36,6 @@ define(['text!./monitor.html', 'main/pluginapi', 'webjars!d3', './connection'], 
             Connection.init(self.defaultTime);
             Connection.open(consoleWsUrl, function () {});
             Connection.updateModules([ self ]);
-
-            this.title = ko.observable("monitor");
         },
         collect: function (parameters) {
             var count = 5 + Math.round(Math.random() * 10);
